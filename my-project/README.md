@@ -34,6 +34,7 @@
 │   │   ├── css                                 // 公共css文件夹  
 │   │   │   ├── reset.css                       // style重置  
 │   │   │   ├── common.css                      // 总样式文件  
+│   │   │   ├── mixin.scss                      // 样式公用属性和方法
 │   │   │   └── px2rem.scss                     // rem公用方法  
 │   │   ├── images                              // 公共img文件夹  
 │   │   │   ├── icons                           // 图标文件夹  
