@@ -1,8 +1,6 @@
 # taokeapp
 
-> 复刻淘客文案App  
-> 增加外部接口数据  
-> 调用酷Q采集数据  
+> 根据Psd UI原型文件构建单页面应用App——"找肉单"   
 
 ## 开发说明
 
@@ -14,16 +12,14 @@
 
 ## 项目进度
 - [x] 前端框架搭建 -- 完成
-- [ ] 后端服务器搭建 -- 进行中
-- [ ] 首页
-- [ ] 找券页
-- [ ] 个人中心
-- [ ] 页脚 -- 进行中 
-- [ ] 登录
-- [ ] 搜索
-- [ ] 外网数据接口
-- [ ] 酷Q数据接口
-- 其他
+- [x] 后端服务器搭建 -- 完成
+- [x] 首页 -- 完成
+- [x] 肉单页 -- 完成
+- [x] 采集群页 -- 完成
+- [x] 个人中心 -- 完成
+- [x] 页脚 -- 完成
+- [ ] 前后端数据对接 -- 进行中
+- [ ] 其他 -- 待开发
 
 ## 项目布局
 
@@ -42,22 +38,31 @@
 │   │   ├── images                              // 公共img文件夹  
 │   │   │   ├── icons                           // 图标文件夹  
 │   │   └── js                                  // 公共js文件  
-│   │       └── rem.js                          // px转换rem
+│   │       ├── mUtils.js                       // 公用js方法
+│   │       ├── mixin.js                        // 自定义mixin
+│   │       └── rem.js                          // 淘宝rem解决方案
 │   │    
 │   ├── components                              // 组件  
-│   │   ├── findCoupons                         // 找券相关组件
-│   │   ├── footer                      
-│   │   │   └── footGuide.vue                   // 底部公共组件
-│   │   ├── home                                // 首页相关组件
-│   │   ├── index.js                            // 组件总管理文件 **
-│   │   └── personalCenter                      // 个人中心相关组件
+│   │   ├── common
+│   │   │   ├── Uploader.vue                    // 商品上传
+│   │   │   ├── Uploader_2.vue                  // 个人中心上传
+│   │   │   ├── goodslist.vue                   // 商品列表
+│   │   │   └── grouplist.vue                   // 采集群列表
+│   │   ├── footer
+│   │   │   └── footerNav.vue                   // 页脚（废弃）
+│   │   ├── header
+│   │   │   ├── head.vue                        // 首页头
+│   │   │   └── head_2.vue                      // 采集群头
+│   │   └── index.js                            // 组件管理
 │   │  
 │   ├── page
-│   │   ├── findCoupons
-│   │   │   └── index.vue                       // 找券
+│   │   ├── group
+│   │   │   └── index.vue                       // 采集群
 │   │   ├── home
 │   │   │   └── index.vue                       // 首页
-│   │   └── personalCenter
+│   │   ├── meat
+│   │   │   └── index.vue                       // 肉单
+│   │   └── mine
 │   │       └── index.vue                       // 个人中心
 │   │  
 │   ├── router
