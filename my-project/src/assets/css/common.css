@@ -1,0 +1,50 @@
+#app {
+    height: 100%;
+    width: 100%;
+}
+
+.popUp_form .vux-popup-header-title {
+    color: #fff;
+}
+.popUp_form_detail .vux-x-input,
+.popUp_form_detail textarea,
+.textarea_input textarea {
+    background-color: #f5f5f5;
+}
+
+.popUp_form_time.weui-cell:before,
+.popUp_form_group .weui-cells:before,
+.popUp_form_group .weui-cells:after,
+.popUp_form_group .weui-cells {
+    border-top: none;
+    border-bottom: none;
+}
+
+.popUp_friend_header .vux-popup-header-title {
+    color: #fff;
+}
+
+.weui-cell.textarea:before {
+    border-top: none;
+}
+
+.input_info {
+    font-size: 20px;
+    text-align: center;
+    line-height: 80px;
+}
+.input_info.left {
+    text-align: left;
+}
+
+.search_Bar .weui-search-bar:before {
+    border-top: none;
+}
+
+.search_Bar label {
+    line-height: 52px;
+}
+
+.redIcon {
+    fill: #ff2200;
+}
