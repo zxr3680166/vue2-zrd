@@ -131,9 +131,7 @@
         data () {
             return {
                 offset: 0, // 批次加载商品列表，每次加载20个 limit = 20
-                goodsListArr: [// 商品列表数据
-                
-                ],
+                goodsListArr: [],// 商品列表数据
                 preventRepeatReuqest: false, //到达底部加载数据，防止重复加载
                 showBackStatus: false, //显示返回顶部按钮
                 showLoading: false, //显示加载动画
