@@ -186,7 +186,7 @@
             },
             getList (page) {
                 this.$http.get(`api/get_dtk_goods_list?type=${this.type}&page=${page}`).then(res => {
-                    this.goodsListArr = res.data.data.list;
+                    this.goodsListArr = this.goodsListArr.concat(res.data.data.list);
                     this.page = page;
                 });
             },

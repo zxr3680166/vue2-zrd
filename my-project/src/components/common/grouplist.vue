@@ -116,6 +116,7 @@
                     index: 0,
                     title: '',
                 },
+                page: 1//当前页数
             }
         },
         directives: {
@@ -158,9 +159,9 @@
                 
                 return `https://gchat.qpic.cn/gchatpic_new/691605980/575514581-2987620153-${name}/0?vuin=343049347&term=2`;
             },
-            getList () {
-                this.$http.get('api/get_caijigoods_List?page=1&pageSize=20').then(res => {
-                    this.groupListArr = res.data.data.list;
+            getList (page) {
+                this.$http.get(`api/get_caijigoods_List?page=${page}&pageSize=20`).then(res => {
+                    this.groupListArr = this.groupListArr.concat(res.data.data.list);
                 });
             },
             //到达底部加载更多数据
@@ -203,7 +204,7 @@
         },
         mounted (){
             this.$nextTick(() => {
-                this.getList();
+                this.getList(1);
             });
         }
 
