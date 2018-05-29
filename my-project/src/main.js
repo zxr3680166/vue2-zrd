@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+
 import routes from './router/router'
 import store from './store/'
 
@@ -13,8 +16,8 @@ import './components/index'
 import './assets/js/rem'
 
 Vue.use(VueRouter)
+Vue.use(VueAxios, axios)
 
-//
 // 路由
 const router = new VueRouter({
     routes

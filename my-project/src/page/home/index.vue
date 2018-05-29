@@ -18,7 +18,7 @@
             <swiper-item class="swiperItem" v-for="(item, idx) in tabList" :key="idx">
                 <div class="tab-swiper vux-center">
                     <!-- 商品列表 -->
-                    <goods-list v-if="hasGetData"></goods-list>
+                    <goods-list v-if="hasGetData" :type="idx"></goods-list>
                 </div>
             </swiper-item>
         </swiper>

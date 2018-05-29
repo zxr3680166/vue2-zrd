@@ -1,26 +1,19 @@
 <template>
     <div class="grouplist_container">
         <ul v-load-more="loaderMore" v-if="groupListArr.length" type="1">
-            <li v-for="(item,idx) in groupListArr" class="group_li" @click="openShare(idx)">
+            <li v-for="(item,idx) in groupListArr" class="group_li" :key="item.id" @click="openShare(idx)">
                 <section>
-                    <img :src="require('../../assets/images/' + item.image_path)" class="group_img">
+                    <img :src="cover(item.image)" class="group_img">
                 </section>
                 <group class="group_right" :gutter="0">
                     <header class="group_detail_header">
                         <flexbox orient="vertical">
                             <flexbox-item>
-                                <h4 class="group_title">{{item.name}}</h4>
+                                <h4 class="group_title">{{item.title}}</h4>
                             </flexbox-item>
                         </flexbox>
                     </header>
-                    <flexbox class="info_detail" :gutter="0">
-                        <flexbox-item :span="1/2">
-                            <div class="group_info">券后 <em>¥{{item.price}}</em></div>
-                        </flexbox-item>
-                        <flexbox-item :span="1/2">
-                            <div class="group_info">佣金：{{item.rating}}%</div>
-                        </flexbox-item>
-                    </flexbox>
+                    <p class="info_detail f12" :gutter="0">{{item.tip}}</p>
                 </group>
                 <div class="group_mask" v-if="item.showMask">
                     <flexbox orient="vertical" :gutter="0">
@@ -112,51 +105,6 @@
                         share: true, // 朋友圈文案
                         remaind_num: 5000, // 剩余数量
                         rate: 4.8, // 评分
-                    },
-                    {
-                        link: 'https://doc.vux.li/zh-CN/components/cell.html',
-                        image_path: 'group_0.png', // 商品图
-                        showMask: true, // 是否显示提示信息
-                        sales_Volume: 500, // 2小时销量
-                        is_premium: true, // 品牌
-                        name: '【马丁】男士洗发水沐浴露套装2瓶', // 商品名
-                        price: 120.6, // 价格
-                        rating: 80, // 佣金
-                        order_num: 888, // 销量
-                        ticket: 60, // 券价格
-                        share: false, // 朋友圈文案
-                        remaind_num: 800, // 剩余数量
-                        rate: 4.8, // 评分
-                    },
-                    {
-                        link: 'https://doc.vux.li/zh-CN/components/cell.html',
-                        image_path: 'group_0.png', // 商品图
-                        showMask: true, // 是否显示提示信息
-                        sales_Volume: 5000, // 2小时销量
-                        is_premium: true, // 品牌
-                        name: '【马丁】男士洗发水沐浴露套装2瓶', // 商品名
-                        price: 20.6, // 价格
-                        rating: 30, // 佣金
-                        order_num: 8888, // 销量
-                        ticket: 60, // 券价格
-                        share: true, // 朋友圈文案
-                        remaind_num: 5000, // 剩余数量
-                        rate: 4.8, // 评分
-                    },
-                    {
-                        link: 'https://doc.vux.li/zh-CN/components/cell.html',
-                        image_path: 'group_0.png', // 商品图
-                        showMask: true, // 是否显示提示信息
-                        sales_Volume: 500, // 2小时销量
-                        is_premium: true, // 品牌
-                        name: '【马丁】男士洗发水沐浴露套装2瓶', // 商品名
-                        price: 120.6, // 价格
-                        rating: 80, // 佣金
-                        order_num: 888, // 销量
-                        ticket: 60, // 券价格
-                        share: false, // 朋友圈文案
-                        remaind_num: 800, // 剩余数量
-                        rate: 4.8, // 评分
                     }
                 ],
                 preventRepeatReuqest: false, //到达底部加载数据，防止重复加载
@@ -169,9 +117,6 @@
                     title: '',
                 },
             }
-        },
-        mounted () {
-            // this.initData()
         },
         directives: {
             TransferDom
@@ -208,31 +153,19 @@
                                     this.showBackStatus = status
                                 })*/
             },
+            cover (image){
+                let name = !!image ? image.split('.')[0] : '';
+                
+                return `https://gchat.qpic.cn/gchatpic_new/691605980/575514581-2987620153-${name}/0?vuin=343049347&term=2`;
+            },
+            getList () {
+                this.$http.get('api/get_caijigoods_List?page=1&pageSize=20').then(res => {
+                    this.groupListArr = res.data.data.list;
+                });
+            },
             //到达底部加载更多数据
             async loaderMore () {
-                /*                if (this.touchend) {
-                                    return
-                                }
-                                //防止重复请求
-                                if (this.preventRepeatReuqest) {
-                                    return
-                                }
-                                this.showLoading = true
-                                this.preventRepeatReuqest = true
-
-                                //数据的定位加20位
-                                this.offset += 20
-                                let res
-                                // let res = await shopList(this.latitude, this.longitude, this.offset, this.restaurantCategoryId);
-
-                                this.hideLoading()
-                                this.shopListArr = [...this.shopListArr, ...res]
-                                //当获取数据小于20，说明没有更多数据，不需要再次请求数据
-                                if (res.length < 20) {
-                                    this.touchend = true
-                                    return
-                                }
-                                this.preventRepeatReuqest = false*/
+                
             },
             //开发环境与编译环境loading隐藏方式不同
             hideLoading () {
@@ -267,6 +200,11 @@
             change (val, label) {
                 console.log('change', val, label)
             },
+        },
+        mounted (){
+            this.$nextTick(() => {
+                this.getList();
+            });
         }
 
     }

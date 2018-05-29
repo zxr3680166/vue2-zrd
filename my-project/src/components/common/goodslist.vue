@@ -1,37 +1,37 @@
 <template>
     <div class="goodslist_container">
         <ul v-load-more="loaderMore" v-if="goodsListArr.length" type="1">
-            <li v-for="item in goodsListArr" class="goods_li">
+            <li v-for="item in goodsListArr" class="goods_li" :key="item.ID">
                 <section>
-                    <img :src="require('../../assets/images/' + item.image_path)" class="goods_img">
+                    <img :src="item.Pic" class="goods_img">
                 </section>
                 <group class="goods_right" :gutter="0">
                     <header class="goods_detail_header">
                         <flexbox orient="vertical">
-                            <flexbox-item>
+                            <!-- <flexbox-item>
                                 <h3 v-show="item.showVolume" class="goods_title_home">
-                                    最近2小时销售{{item.sales_Volume}}件</h3>
-                            </flexbox-item>
+                                    最近2小时销售{{item.Sales_num}}件</h3>
+                            </flexbox-item> -->
                             <flexbox-item>
-                                <h4 :class="item.is_premium? 'premium': ''" class="goods_title">
-                                    {{item.name}}</h4>
+                                <h4 :class="item.IsTmall? 'premium': ''" class="goods_title">
+                                    {{item.D_title}}</h4>
                             </flexbox-item>
                         </flexbox>
                     </header>
                     <flexbox class="info_detail">
                         <flexbox-item :span="1/5">
-                            <div class="goods_info">¥{{item.price}}</div>
+                            <div class="goods_info">¥{{item.Org_Price}}</div>
                         </flexbox-item>
                         <flexbox-item :span="1/3">
-                            <div class="goods_info">佣金：{{item.rating}}%</div>
+                            <div class="goods_info">佣金：{{item.Commission_jihua}}%</div>
                         </flexbox-item>
                         <flexbox-item>
-                            <div class="goods_info">销量：{{item.order_num}}</div>
+                            <div class="goods_info">销量：{{item.Sales_num}}</div>
                         </flexbox-item>
                     </flexbox>
                     <flexbox class="info_detail">
                         <flexbox-item :span="1/5">
-                            <div class="goods_info">券{{item.ticket}}元</div>
+                            <div class="goods_info">券{{item.Quan_price}}元</div>
                         </flexbox-item>
                         <flexbox-item :span="1.2/3" @click.native="openFriend(item)">
                             <x-button v-if="!item.friend" mini type="warn" class="mini_button">
@@ -42,7 +42,7 @@
                             </x-button>
                         </flexbox-item>
                         <flexbox-item>
-                            <div class="goods_info">剩余：{{item.remaind_num}}</div>
+                            <div class="goods_info">剩余：{{item.Quan_surplus}}</div>
                         </flexbox-item>
                     </flexbox>
                     <flexbox class="info_detail">
@@ -132,62 +132,7 @@
             return {
                 offset: 0, // 批次加载商品列表，每次加载20个 limit = 20
                 goodsListArr: [// 商品列表数据
-                    {
-                        link: 'https://doc.vux.li/zh-CN/components/cell.html',
-                        image_path: 'goods_0.png', // 商品图
-                        showVolume: true, // 是否显示销量
-                        sales_Volume: 5000, // 2小时销量
-                        is_premium: true, // 品牌
-                        name: '【马丁】男士洗发水沐浴露套装2瓶', // 商品名
-                        price: 20.6, // 价格
-                        rating: 30, // 佣金
-                        order_num: 8888, // 销量
-                        ticket: 60, // 券价格
-                        friend: true, // 朋友圈文案
-                        remaind_num: 5000, // 剩余数量
-                    },
-                    {
-                        link: 'https://doc.vux.li/zh-CN/components/cell.html',
-                        image_path: 'goods_1.png', // 商品图
-                        showVolume: true, // 是否显示销量
-                        sales_Volume: 500, // 2小时销量
-                        is_premium: true, // 品牌
-                        name: '【马丁】男士洗发水沐浴露套装2瓶', // 商品名
-                        price: 120.6, // 价格
-                        rating: 80, // 佣金
-                        order_num: 888, // 销量
-                        ticket: 60, // 券价格
-                        friend: false, // 朋友圈文案
-                        remaind_num: 800, // 剩余数量
-                    },
-                    {
-                        link: 'https://doc.vux.li/zh-CN/components/cell.html',
-                        image_path: 'goods_2.png', // 商品图
-                        showVolume: true, // 是否显示销量
-                        sales_Volume: 5000, // 2小时销量
-                        is_premium: true, // 品牌
-                        name: '【马丁】男士洗发水沐浴露套装2瓶', // 商品名
-                        price: 20.6, // 价格
-                        rating: 30, // 佣金
-                        order_num: 8888, // 销量
-                        ticket: 60, // 券价格
-                        friend: true, // 朋友圈文案
-                        remaind_num: 5000, // 剩余数量
-                    },
-                    {
-                        link: 'https://doc.vux.li/zh-CN/components/cell.html',
-                        image_path: 'goods_3.png', // 商品图
-                        showVolume: true, // 是否显示销量
-                        sales_Volume: 500, // 2小时销量
-                        is_premium: true, // 品牌
-                        name: '【马丁】男士洗发水沐浴露套装2瓶', // 商品名
-                        price: 120.6, // 价格
-                        rating: 80, // 佣金
-                        order_num: 888, // 销量
-                        ticket: 60, // 券价格
-                        friend: false, // 朋友圈文案
-                        remaind_num: 800, // 剩余数量
-                    }
+                
                 ],
                 preventRepeatReuqest: false, //到达底部加载数据，防止重复加载
                 showBackStatus: false, //显示返回顶部按钮
@@ -201,10 +146,8 @@
                     text: '',
                 },
                 thumbnails: [],
+                page: 1
             }
-        },
-        mounted () {
-            // this.initData()
         },
         directives: {
             TransferDom
@@ -222,24 +165,30 @@
             FlexboxItem,
         },
         mixins: [loadMore],
-        props: [],
+        props: ['type'],
         computed: {},
         updated () {
         },
         methods: {
             initData () {
                 //获取数据
-                /*                let res
-                                // let res = await shopList(this.latitude, this.longitude, this.offset, this.restaurantCategoryId);
-                                this.shopListArr = [...res]
-                                if (res.length < 20) {
-                                    this.touchend = true
-                                }
-                                this.hideLoading()
-                                //开始监听scrollTop的值，达到一定程度后显示返回顶部按钮
-                                showBack(status => {
-                                    this.showBackStatus = status
-                                })*/
+                    /*   let res
+                    // let res = await shopList(this.latitude, this.longitude, this.offset, this.restaurantCategoryId);
+                    this.shopListArr = [...res]
+                    if (res.length < 20) {
+                        this.touchend = true
+                    }
+                    this.hideLoading()
+                    //开始监听scrollTop的值，达到一定程度后显示返回顶部按钮
+                    showBack(status => {
+                        this.showBackStatus = status
+                    })*/
+            },
+            getList (page) {
+                this.$http.get(`api/get_dtk_goods_list?type=${this.type}&page=${page}`).then(res => {
+                    this.goodsListArr = res.data.data.list;
+                    this.page = page;
+                });
             },
             //到达底部加载更多数据
             async loaderMore () {
@@ -286,6 +235,11 @@
             onHide () {
                 console.log('on hide')
             }
+        },
+        mounted (){
+            this.$nextTick(() => {
+                this.getList(this.page);
+            });
         }
 
     }
@@ -336,7 +290,7 @@
                 white-space: nowrap;
             }
             .premium::before {
-                content: '品牌';
+                content: '天猫';
                 display: inline-block;
                 color: #333;
                 background-color: #ffd930;
