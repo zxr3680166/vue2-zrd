@@ -14,14 +14,10 @@ export const loadMore = {
 				let scrollEl;
 				let heightEl;
 				let scrollType = el.attributes.type && el.attributes.type.value;
-				let scrollReduce = 2;
-				if (scrollType == 2) {
-					scrollEl = el;
-					heightEl = el.children[0];
-				} else {
-					scrollEl = document.body;
-					heightEl = el;
-				}
+                let scrollReduce = 2;
+
+                scrollEl = el;
+                heightEl = el.children[0];
 
 				el.addEventListener('touchstart', () => {
 					height = heightEl.clientHeight;
@@ -56,8 +52,16 @@ export const loadMore = {
 				}
 
 				const loadMore = () => {
+                    // console.log('loadmore',el.clientHeight,el.children[0].clientHeight)
+                    // console.log(scrollEl.scrollTop ,windowHeight ,height ,setTop ,paddingBottom, marginBottom ,scrollReduce)
+                    // console.log(scrollEl.scrollTop +windowHeight ,height +setTop +paddingBottom+ marginBottom -scrollReduce)
+                    // if (scrollEl.scrollTop > el.clientHeight ) {
+                    //     console.log('显示')
+                    // } else {
+                    //     console.log('不显示')
+                    // }
 					if (scrollEl.scrollTop + windowHeight >= height + setTop + paddingBottom + marginBottom - scrollReduce) {
-						binding.value();
+                        binding.value();
 					}
 				}
 			}

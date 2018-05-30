@@ -1,6 +1,6 @@
 <template>
-    <div class="goodslist_container">
-        <ul v-load-more="loaderMore" v-if="goodsListArr.length" type="1">
+    <div :id="'goodslist_' + type" class="goodslist_container loadmore" v-load-more="loaderMore">
+        <ul v-if="goodsListArr.length" type="1">
             <li v-for="item in goodsListArr" class="goods_li" :key="item.ID">
                 <section>
                     <img :src="item.Pic" class="goods_img">
@@ -64,16 +64,14 @@
                 <img src="../../assets/images/shopback.svg" class="list_back_svg">
             </li>
         </ul>
+
         <p v-if="touchend" class="empty_data">请取消朋友圈文案可以搜索更多</p>
-        <aside class="return_top" @click="backTop" v-if="showBackStatus">
-            <svg class="back_top_svg">
-                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#backtop"></use>
-            </svg>
-        </aside>
-        <div ref="abc" style="background-color: red;"></div>
+
+
         <transition name="loading">
             <load-more v-show="showLoading" tip="正在加载"></load-more>
         </transition>
+
         <div v-transfer-dom>
             <popup v-model="friendPop" class="popUp_friend">
                 <popup-header
@@ -88,7 +86,8 @@
                 <uploader :thumbnails="thumbnails"></uploader>
                 <flexbox :gutter="0" class="button_wrap">
                     <flexbox-item :span="1/2">
-                        <x-button mini type="warn" class="share_button" @click.native="friendPop = !friendPop">取消</x-button>
+                        <x-button mini type="warn" class="share_button" @click.native="friendPop = !friendPop">取消
+                        </x-button>
                     </flexbox-item>
                     <flexbox-item :span="1/2">
                         <x-button mini type="warn" class="share_button" @click.native="confirmPop = !confirmPop">提交
@@ -124,7 +123,6 @@
         LoadMore
     } from 'vux'
     import { loadMore } from '../../assets/js/mixin'
-    import { showBack, animate } from '../../assets/js/mUtils'
     import uploader from './Uploader'
 
     export default {
@@ -168,59 +166,47 @@
         updated () {
         },
         methods: {
-            initData () {
+            async initData () {
                 //获取数据
-                    /*   let res
-                    // let res = await shopList(this.latitude, this.longitude, this.offset, this.restaurantCategoryId);
-                    this.shopListArr = [...res]
-                    if (res.length < 20) {
-                        this.touchend = true
-                    }
-                    this.hideLoading()
-                    //开始监听scrollTop的值，达到一定程度后显示返回顶部按钮
-                    showBack(status => {
-                        this.showBackStatus = status
-                    })*/
+                await this.getList(this.page)
+
+                this.hideLoading()
+
             },
             getList (page) {
+
                 this.$http.get(`api/get_dtk_goods_list?type=${this.type}&page=${page}`).then(res => {
-                    this.goodsListArr = this.goodsListArr.concat(res.data.data.list);
-                    this.page = page;
-                });
+                    this.goodsListArr = this.goodsListArr.concat(res.data.data.list)
+                    this.goodsListArr = [...new Set(this.goodsListArr)] // 去重
+                    this.page = page
+                    // console.log('加载更多', this.page,this.goodsListArr.length)
+
+                    if (this.goodsListArr.length < 20) {
+                        this.touchend = true
+                    }
+
+                    this.hideLoading()
+                    this.preventRepeatReuqest = false
+                })
             },
             //到达底部加载更多数据
             async loaderMore () {
-                /*                if (this.touchend) {
-                                    return
-                                }
-                                //防止重复请求
-                                if (this.preventRepeatReuqest) {
-                                    return
-                                }
-                                this.showLoading = true
-                                this.preventRepeatReuqest = true
+                if (this.touchend) {
+                    return
+                }
+                //防止重复请求
+                if (this.preventRepeatReuqest) {
+                    return
+                }
+                this.showLoading = true
+                this.preventRepeatReuqest = true
+                //获取数据
+                this.getList(this.page + 1)
 
-                                //数据的定位加20位
-                                this.offset += 20
-                                let res
-                                // let res = await shopList(this.latitude, this.longitude, this.offset, this.restaurantCategoryId);
-
-                                this.hideLoading()
-                                this.shopListArr = [...this.shopListArr, ...res]
-                                //当获取数据小于20，说明没有更多数据，不需要再次请求数据
-                                if (res.length < 20) {
-                                    this.touchend = true
-                                    return
-                                }
-                                this.preventRepeatReuqest = false*/
             },
             //开发环境与编译环境loading隐藏方式不同
             hideLoading () {
                 this.showLoading = false
-            },
-            //返回顶部
-            backTop () {
-                animate(document.body, {scrollTop: '0'}, 400, 'ease-out')
             },
             openFriend (item) {
                 this.friendPop = !this.friendPop
@@ -232,12 +218,12 @@
             },
             onHide () {
                 console.log('on hide')
-            }
+            },
         },
-        mounted (){
+        mounted () {
             this.$nextTick(() => {
-                this.getList(this.page);
-            });
+                this.initData()
+            })
         }
 
     }
@@ -248,6 +234,17 @@
 
     .goodslist_container {
         background-color: #fff;
+        height: 100%;
+    }
+
+    .loadmore {
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
+        transform: translate3d(0, 0, 0);
+        &::-webkit-scrollbar {
+            width: 0;
+            display: none;
+        }
     }
 
     .goods_li {
@@ -262,7 +259,7 @@
     }
 
     .list_back_li {
-        height: 485px;
+        height: 261px;
         .list_back_svg {
             @include wh(100%, 100%)
         }
@@ -412,5 +409,20 @@
 
     .loading-enter, .loading-leave-active {
         opacity: 0
+    }
+
+    #back_top {
+        position: fixed;
+        bottom: 10%;
+        right: 40px;
+        width: 64px;
+        height: 64px;
+        border-radius: 64px;
+        text-align: center;
+        background-color: rgba(49, 49, 49, 0.23);
+
+        .icon-color {
+            fill: #fff;
+        }
     }
 </style>

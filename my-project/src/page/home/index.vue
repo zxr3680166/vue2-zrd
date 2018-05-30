@@ -15,13 +15,17 @@
 
         <!-- 正文 -->
         <swiper class="tabContainer" v-model="index" height="100%" :show-dots="false">
-            <swiper-item class="swiperItem" v-for="(item, idx) in tabList" :key="idx">
+            <swiper-item class="swiperItem" v-for="(item, index) in tabList" :key="index">
                 <div class="tab-swiper vux-center">
                     <!-- 商品列表 -->
-                    <goods-list v-if="hasGetData" :type="idx"></goods-list>
+                    <goods-list v-if="hasGetData" :type="index"></goods-list>
                 </div>
             </swiper-item>
         </swiper>
+
+
+        <back-to-top :index="index"></back-to-top>
+
     </div>
 
 </template>
@@ -29,11 +33,12 @@
 <script>
     import headNav from '../../components/header/head'
     import goodsList from '../../components/common/goodsList'
-    import {Tab, TabItem, Swiper, SwiperItem} from 'vux'
+    import backToTop from '../../components/common/backToTop'
+    import { Tab, TabItem, Swiper, SwiperItem } from 'vux'
 
     export default {
         name: 'home',
-        data() {
+        data () {
             return {
                 tabList: ['实时排行', '精选高佣', '秒杀', '聚划算', '淘抢购', '全部商品'],
                 index: 0,
@@ -42,6 +47,7 @@
         },
 
         components: {
+            backToTop,
             goodsList,
             headNav,
             Tab,
@@ -77,12 +83,16 @@
             height: 1054px;
 
             .swiperItem {
-                overflow-y: scroll;
-                -webkit-overflow-scrolling: touch;
-                transform: translate3d(0, 0, 0);
-                &::-webkit-scrollbar {
-                    width: 0;
-                    display: none;
+                /*                overflow-y: scroll;
+                                -webkit-overflow-scrolling: touch;
+                                transform: translate3d(0, 0, 0);
+                                &::-webkit-scrollbar {
+                                    width: 0;
+                                    display: none;
+                                }*/
+
+                .tab-swiper {
+                    height: 100%;
                 }
             }
         }
