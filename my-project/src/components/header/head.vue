@@ -160,6 +160,7 @@
             },
             onChange () {
                 this.classify_selected.cid = this.classifyList[this.classify].cid
+                this.classify_selected.name = this.classifyList[this.classify].name
             }
 
         }

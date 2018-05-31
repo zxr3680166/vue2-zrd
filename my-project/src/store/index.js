@@ -15,7 +15,7 @@ const state = {
         level: 9, //等级
         point: 8888, //积分
     },
-    classify_selected: {
+    classify_selected: {// 分类选择
         cid: 0,
         name:'',
     }
