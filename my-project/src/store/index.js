@@ -15,6 +15,10 @@ const state = {
         level: 9, //等级
         point: 8888, //积分
     },
+    classify_selected: {
+        cid: 0,
+        name:'',
+    }
 }
 
 export default new Vuex.Store({

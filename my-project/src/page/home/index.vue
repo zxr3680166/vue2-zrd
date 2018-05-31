@@ -18,7 +18,7 @@
             <swiper-item class="swiperItem" v-for="(item, index) in tabList" :key="index">
                 <div class="tab-swiper vux-center">
                     <!-- 商品列表 -->
-                    <goods-list v-if="hasGetData" :type="index"></goods-list>
+                    <goods-list v-if="hasGetData" :type="index" :cid="classify_selected.cid"></goods-list>
                 </div>
             </swiper-item>
         </swiper>
@@ -35,6 +35,7 @@
     import goodsList from '../../components/common/goodsList'
     import backToTop from '../../components/common/backToTop'
     import { Tab, TabItem, Swiper, SwiperItem } from 'vux'
+    import { mapState } from 'vuex'
 
     export default {
         name: 'home',
@@ -45,7 +46,11 @@
                 hasGetData: true,
             }
         },
-
+        computed: {
+            ...mapState([
+                'classify_selected',
+            ]),
+        },
         components: {
             backToTop,
             goodsList,

@@ -142,7 +142,9 @@
                     text: '',
                 },
                 thumbnails: [],
-                page: 1
+                page: 1,
+                selected: this.classify_selected,
+                oldCid: 0,
             }
         },
         directives: {
@@ -161,26 +163,43 @@
             FlexboxItem,
         },
         mixins: [loadMore],
-        props: ['type'],
-        computed: {},
+        props: ['type', 'cid'],
+        watch: {
+            //cid，当值发生变化的时候重新监听
+            cid: function (value) {
+                // console.log('载入分类数据', this.oldCid, this.cid)
+
+                if (this.oldCid != this.cid) {
+                    this.page = 1
+                    this.touchend = false
+                }
+                this.loaderMore()
+            },
+        },
         updated () {
         },
         methods: {
             async initData () {
                 //获取数据
-                await this.getList(this.page)
-
-                this.hideLoading()
+                this.getList(this.page)
 
             },
             getList (page) {
 
-                this.$http.get(`api/get_dtk_goods_list?type=${this.type}&page=${page}`).then(res => {
-                    this.goodsListArr = this.goodsListArr.concat(res.data.data.list)
-                    this.goodsListArr = [...new Set(this.goodsListArr)] // 去重
-                    this.page = page
-                    // console.log('加载更多', this.page,this.goodsListArr.length)
+                this.$http.get(`api/get_dtk_goods_list?type=${this.type}&page=${page}&cid=${this.cid}`).then(res => {
 
+                    if (this.oldCid === this.cid) {
+                        // console.log('加载更多')
+                        this.goodsListArr = this.goodsListArr.concat(res.data.data.list)
+                    } else {
+                        // console.log('重新加载')
+                        let arr = []
+                        this.goodsListArr = arr.concat(res.data.data.list)
+                        this.oldCid = this.cid
+                    }
+
+                    this.goodsListArr = [...new Set(this.goodsListArr)] // 去重
+                    this.page += 1 //页码加1
                     if (this.goodsListArr.length < 20) {
                         this.touchend = true
                     }
@@ -201,7 +220,7 @@
                 this.showLoading = true
                 this.preventRepeatReuqest = true
                 //获取数据
-                this.getList(this.page + 1)
+                this.getList(this.page)
 
             },
             //开发环境与编译环境loading隐藏方式不同
