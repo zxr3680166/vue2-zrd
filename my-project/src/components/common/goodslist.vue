@@ -34,7 +34,7 @@
                             <div class="goods_info">券{{item.Quan_price}}元</div>
                         </flexbox-item>
                         <flexbox-item :span="1.2/3" @click.native="openFriend(item)">
-                            <x-button v-if="!item.friend" mini type="warn" class="mini_button">
+                            <x-button v-if="!item.Introduce" mini type="warn" class="mini_button">
                                 朋友圈文案
                             </x-button>
                             <x-button v-else mini type="" class="mini_button dis">
@@ -79,10 +79,11 @@
                         title="完善朋友圈文案"
                         :show-bottom-border="false">
                 </popup-header>
-                <div class="link">{{popInfo.link}}</div>
+                <div class="link">https://detail.tmall.com/item.htm?id={{popInfo.link}}</div>
                 <div class="title">{{popInfo.title}}</div>
                 <x-textarea class="textarea_input" title="" :max="200" placeholder="请填写完善朋友圈文案" :show-counter="false"
-                            :rows="8" :cols="30"></x-textarea>
+                            :rows="8" :cols="30" v-model="popInfo.intro">
+                </x-textarea>
                 <uploader :thumbnails="thumbnails"></uploader>
                 <flexbox :gutter="0" class="button_wrap">
                     <flexbox-item :span="1/2">
@@ -139,7 +140,7 @@
                 popInfo: {
                     link: '',
                     title: '',
-                    text: '',
+                    intro: '',
                 },
                 thumbnails: [],
                 page: 1,
@@ -231,7 +232,8 @@
                 console.log(item)
                 this.friendPop = !this.friendPop
                 this.popInfo.title = item.D_title
-                this.popInfo.link = item.Quan_link
+                this.popInfo.link = item.GoodsID
+                this.popInfo.intro = item.Introduce
             },
             onShow () {
                 console.log('on show')
@@ -288,6 +290,7 @@
 
     .goods_right {
         width: 408px;
+        min-width: 408px;
         padding: 4px 0;
 
         .goods_detail_header {
