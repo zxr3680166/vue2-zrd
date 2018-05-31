@@ -29,8 +29,8 @@
                             <div class="goods_info">销量：{{item.Sales_num}}</div>
                         </flexbox-item>
                     </flexbox>
-                    <flexbox class="info_detail">
-                        <flexbox-item :span="1/5">
+                    <flexbox class="info_detail" :gutter="0">
+                        <flexbox-item :span="1.2/6">
                             <div class="goods_info">券{{item.Quan_price}}元</div>
                         </flexbox-item>
                         <flexbox-item :span="1.2/3" @click.native="openFriend(item)">
@@ -228,9 +228,10 @@
                 this.showLoading = false
             },
             openFriend (item) {
+                console.log(item)
                 this.friendPop = !this.friendPop
-                this.popInfo.title = item.name
-                this.popInfo.link = item.link
+                this.popInfo.title = item.D_title
+                this.popInfo.link = item.Quan_link
             },
             onShow () {
                 console.log('on show')
@@ -252,7 +253,7 @@
     @import '../../assets/css/mixin';
 
     .goodslist_container {
-        background-color: #fff;
+        background-color: $bc;
         height: 100%;
     }
 
@@ -269,6 +270,7 @@
     .goods_li {
         display: flex;
         margin: 5px 0;
+        background-color: $fc;
     }
 
     .goods_img {
@@ -302,6 +304,7 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
+                margin-top: 20px;
             }
             .premium::before {
                 content: '天猫';
@@ -323,9 +326,10 @@
             }
 
             .mini_button {
-                line-height: 1;
+                line-height: 30px;
                 font-size: 12px;
                 padding: 0 5px;
+                margin-left: 5px;
             }
             .mini_button.dis {
                 background-color: #d9d9d9;
@@ -377,6 +381,10 @@
             line-height: 50px;
             text-align: center;
             margin: 10px;
+            padding: 0 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .textarea_input {

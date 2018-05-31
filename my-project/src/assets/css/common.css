@@ -6,12 +6,15 @@
 .popUp_form .vux-popup-header-title {
     color: #fff;
 }
+
 .popUp_form_detail .vux-x-input,
 .popUp_form_detail textarea,
 .textarea_input textarea {
     background-color: #f5f5f5;
 }
 
+.goods_right .weui-cells:before,
+.goods_right .weui-cells:after,
 .popUp_form_time.weui-cell:before,
 .popUp_form_group .weui-cells:before,
 .popUp_form_group .weui-cells:after,
@@ -33,6 +36,7 @@
     text-align: center;
     line-height: 80px;
 }
+
 .input_info.left {
     text-align: left;
 }
