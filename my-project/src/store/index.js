@@ -7,6 +7,7 @@ Vue.use(Vuex)
 
 const state = {
     userInfo: {//用户信息
+        pid:'123456789',
         user_id: 1, // id
         avatar: 'touxiang.png', // 头像
         username: 'ZXR', // 用户名
