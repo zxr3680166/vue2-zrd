@@ -284,7 +284,6 @@
                 }
             },
             listClick (item) {
-                console.log(item.name)
                 if (item.index == 1) {
                     this.openPopUp(item.name)
                 } else if (item.index == 3) {
@@ -295,11 +294,12 @@
 
             },
             onSubmit_pid () {
-                console.log('提交pid')
-                this.userInfo.pid = this.pid
-                this.$http.post(`http://39.105.108.120/api/update_pid`,{pid:this.pid}).then(res => {
-                    console.log(res.data)
-                })
+                this.$http.post(`/api/update_pid`,{pid:this.pid}).then(res => {
+                    if(res.data.code == 200){
+                        this.userInfo.pid = this.pid;
+                        this.popUp_pid.show = false;
+                    }
+                });
             },
             change (val, label) {
                 console.log('change', val, label)

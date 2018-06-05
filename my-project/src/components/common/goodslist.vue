@@ -20,7 +20,7 @@
                     </header>
                     <flexbox class="info_detail">
                         <flexbox-item :span="1/5">
-                            <div class="goods_info">¥{{item.Org_Price}}</div>
+                            <div class="goods_info">¥{{item.Price}}</div>
                         </flexbox-item>
                         <flexbox-item :span="1/3">
                             <div class="goods_info">佣金：{{item.Commission_jihua}}%</div>
@@ -47,7 +47,7 @@
                     </flexbox>
                     <flexbox class="info_detail">
                         <flexbox-item :span="1/2">
-                            <x-button mini type="warn" class="share_button">复制淘口令</x-button>
+                            <x-button mini type="warn" class="share_button" @click.native="copyTaoPwd(item)">复制淘口令</x-button>
                         </flexbox-item>
                         <flexbox-item :span="1/2">
                             <x-button mini type="warn" class="share_button">分享到微信</x-button>
@@ -224,6 +224,22 @@
                 this.getList(this.page)
 
             },
+            //复制掏口令
+            copyTaoPwd (item){
+                if(!!item.tao_pwd){
+                    location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`;
+                }else{
+                    this.$http.get(`/api/get_taobao_tbk_tpwd?id=${item.keyid}`).then(res => {
+                        if(res.data.code == 200){
+                            item.tao_pwd = res.data.data.tao_pwd;
+                            location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`;
+                        }else{
+                            alert(res.data.data);
+                        }
+                    })
+                }
+            },
+
             //开发环境与编译环境loading隐藏方式不同
             hideLoading () {
                 this.showLoading = false
