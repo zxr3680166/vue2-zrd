@@ -114,7 +114,8 @@
                 </flexbox>
 
                 <uploader :thumbnails="popUp.thumbnails"></uploader>
-                <datetime class="popUp_form_time" v-model="popUp.time" format="YYYY-MM-DD HH:mm" :minute-list="['00', '15', '30', '45']"
+                <datetime class="popUp_form_time" v-model="popUp.time" format="YYYY-MM-DD HH:mm"
+                          :minute-list="['00', '15', '30', '45']"
                           @on-change="change" title="选择时间"></datetime>
 
                 <div class="explain">*审核通过后将消耗<em>100积分/次</em></div>
@@ -134,6 +135,28 @@
                     <checklist title="选择筛选条件" required :options="commonList"
                                v-model="checklist" @on-change="change"></checklist>
                 </group>
+            </popup>
+        </div>
+
+        <div v-transfer-dom>
+            <popup v-model="popUp_pid.show" class="popUp_form" height="120px">
+                <popup-header
+                        class="popUp_form_header"
+                        :title="popUp_pid.title"
+                        left-text="返回"
+                        right-text="提交"
+                        :show-bottom-border="false"
+                        @on-click-right="onSubmit_pid()"
+                        @on-click-left="popUp_pid.show = false">
+                </popup-header>
+                <flexbox orient="vertical" :gutter="10">
+                    <flexbox-item class="popUp_form_detail">
+                        <group :gutter="0" class="popUp_form_group">
+                            <x-input class="textarea_input" placeholder="请填写PID" v-model="pid"></x-input>
+                        </group>
+                    </flexbox-item>
+
+                </flexbox>
             </popup>
         </div>
     </div>
@@ -162,6 +185,7 @@
             return {
                 profiletitle: '我的',
                 username: '登录/注册',           //用户名
+                pid: '',
                 resetname: '',
                 mobile: '暂无绑定手机号',             //电话号码
                 balance: 0,            //我的余额
@@ -208,6 +232,12 @@
                 showPop: false,
                 commonList: ['去重', '聚划算', '淘抢购', '过夜单'], // 分类选择
                 checklist: [],
+                popUp_pid: {
+                    show: false,
+                    title: '设置PID',
+
+                }
+
             }
         },
         mounted () {
@@ -247,6 +277,7 @@
                     this.balance = this.userInfo.balance
                     this.level = this.userInfo.level
                     this.pointNumber = this.userInfo.point
+                    this.pid = this.userInfo.pid
                 } else {
                     this.username = '登录/注册'
                     this.mobile = '暂无绑定手机号'
@@ -256,10 +287,19 @@
                 console.log(item.name)
                 if (item.index == 1) {
                     this.openPopUp(item.name)
+                } else if (item.index == 3) {
+                    this.popUp_pid.show = true
                 }
             },
             onSubmit () {
 
+            },
+            onSubmit_pid () {
+                console.log('提交pid')
+                this.userInfo.pid = this.pid
+                this.$http.post(`http://39.105.108.120/api/update_pid`,{pid:this.pid}).then(res => {
+                    console.log(res.data)
+                })
             },
             change (val, label) {
                 console.log('change', val, label)
@@ -271,7 +311,7 @@
                 console.log('on-confirm arg', val)
                 console.log('current value', this.value1)
             },
-            openPopUp(item) {
+            openPopUp (item) {
                 this.popUp.show = !this.popUp.show
                 this.popUp.title = item
             }
@@ -485,7 +525,6 @@
                 color: $red;
             }
         }
-
 
     }
 
