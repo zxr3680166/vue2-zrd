@@ -263,7 +263,6 @@
                 this.initData()
             })
         }
-
     }
 </script>
 
