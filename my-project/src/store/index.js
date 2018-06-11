@@ -7,18 +7,32 @@ Vue.use(Vuex)
 
 const state = {
     userInfo: {//用户信息
-        pid:'123456789',
-        user_id: 1, // id
-        avatar: 'touxiang.png', // 头像
-        username: 'ZXR', // 用户名
-        mobile: '15160085114', //手机号
-        balance: 1000, //账户余额
-        level: 9, //等级
-        point: 8888, //积分
+        city: '',
+        country: '',
+        create_time: '',
+        groupid: null,
+        headimgurl: '',
+        id: 0,
+        language: '',
+        nickname: '',
+        openid: '',
+        pid: null,
+        privilege: '',
+        province: '',
+        qr_scene: null,
+        qr_scene_str: null,
+        remark: null,
+        sex: 1,
+        subscribe: null,
+        subscribe_scene: null,
+        subscribe_time: null,
+        tagid_list: null,
+        unionid: null,
+
     },
     classify_selected: {// 分类选择
         cid: 0,
-        name:'',
+        name: '',
     }
 }
 

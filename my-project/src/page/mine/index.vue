@@ -2,19 +2,19 @@
     <div class="profile_page">
         <section>
             <section class="profile-number">
-                <router-link :to="userInfo&&userInfo.user_id? '/profile/info' : '/login'" class="profile-link">
+                <router-link :to="userInfo&&userInfo.id? '/profile/info' : '/login'" class="profile-link">
                     <flexbox orient="vertical" :gutter="5">
                         <flexbox-item>
-                            <img :src="require('../../assets/images/' + userInfo.avatar)" class="privateImage"
-                                 v-if="userInfo&&userInfo.user_id">
+                            <img :src="userInfo.headimgurl" class="privateImage"
+                                 v-if="userInfo&&userInfo.id">
                             <span class="privateImage" v-else>
                                 <svg class="privateImage-svg">
-                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#avatar-default"></use>
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#headimgurl-default"></use>
                                 </svg>
                             </span>
                         </flexbox-item>
-                        <flexbox-item class="user-info">{{username}}</flexbox-item>
-                        <flexbox-item class="user-info"><img src="../../assets/images/icons/level.png">Lv.{{level}}&nbsp;&nbsp;
+                        <flexbox-item class="user-info">{{nickname}}</flexbox-item>
+                        <flexbox-item class="user-info"><img src="../../assets/images/icons/level.png">Lv.{{privilege}}&nbsp;&nbsp;
                             积分:{{pointNumber}}
                         </flexbox-item>
                     </flexbox>
@@ -184,14 +184,14 @@
         data () {
             return {
                 profiletitle: '我的',
-                username: '登录/注册',           //用户名
+                nickname: '登录/注册',           //用户名
                 pid: '',
                 resetname: '',
                 mobile: '暂无绑定手机号',             //电话号码
                 balance: 0,            //我的余额
-                level: 0,             //等级
+                privilege: 0,             //等级
                 pointNumber: 0,       //积分数
-                avatar: '',            //头像地址
+                headimgurl: '',            //头像地址
                 profileList: [
                     {
                         index: 1,
@@ -270,16 +270,16 @@
 
         methods: {
             initData () {
-                if (this.userInfo && this.userInfo.user_id) {
-                    this.avatar = this.userInfo.avatar
-                    this.username = this.userInfo.username
+                if (this.userInfo && this.userInfo.id) {
+                    this.headimgurl = this.userInfo.headimgurl
+                    this.nickname = this.userInfo.nickname
                     this.mobile = this.userInfo.mobile || '暂无绑定手机号'
-                    this.balance = this.userInfo.balance
-                    this.level = this.userInfo.level
-                    this.pointNumber = this.userInfo.point
+                    // this.balance = this.userInfo.balance
+                    this.privilege = this.userInfo.privilege
+                    // this.pointNumber = this.userInfo.point
                     this.pid = this.userInfo.pid
                 } else {
-                    this.username = '登录/注册'
+                    this.nickname = '登录/注册'
                     this.mobile = '暂无绑定手机号'
                 }
             },
