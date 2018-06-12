@@ -33,11 +33,11 @@
                         <flexbox-item :span="1.2/6">
                             <div class="goods_info">券{{item.Quan_price}}元</div>
                         </flexbox-item>
-                        <flexbox-item :span="1.2/3" @click.native="openFriend(item)">
+                        <flexbox-item :span="1.2/3">
                             <x-button v-if="item.is_friendpop" mini type="warn" class="mini_button">
                                 朋友圈文案
                             </x-button>
-                            <x-button v-else mini type="" class="mini_button dis">
+                            <x-button v-else mini type="" class="mini_button dis" @click.native="openFriend(item)">
                                 完善朋友圈
                             </x-button>
                         </flexbox-item>
