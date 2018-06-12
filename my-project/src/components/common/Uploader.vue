@@ -3,13 +3,13 @@
         <div class="weui-uploader__bd">
             <ul class="weui-uploader__files">
                 <li class="weui-uploader__file" v-for="(thumbnail, index) in popInfo.market_image"
-                    :style="{ backgroundImage: `url(${ thumbnail })` }" @click.native="click(index)">
+                    :style="{ backgroundImage: `url(http://39.105.108.120/${ thumbnail })` }" @click.native="click(index)">
                     <!--<badge text="X" class="delete" @click.native.stop="deleteImage(index)"></badge>-->
                 </li>
             </ul>
             <ul class="weui-uploader__files">
                 <li class="weui-uploader__file" v-for="(thumbnail, index) in popInfo.image"
-                    :style="{ backgroundImage: `url(${ thumbnail })` }" @click.native="click(index)">
+                    :style="{ backgroundImage: `url('http://39.105.108.120/${ thumbnail })'` }" @click.native="click(index)">
                     <!--<badge text="X" class="delete" @click.native.stop="deleteImage(index)"></badge>-->
                 </li>
             </ul>
@@ -85,13 +85,14 @@
                 this.$http.post(`/api/uploadFile`, form, {
                     headers: {'Content-Type': 'multipart/form-data'}
                 }).then(response => {
-                    uri = 'http://39.105.108.120/' + response.data.data
+                    console.log(response.data)
+
+                    uri = response.data.data
                     if (uploadType == 1) {
                         this.popInfo.market_image.push(uri)
                     } else if (uploadType == 2) {
                         this.popInfo.image.push(uri)
                     }
-                    // console.log(this.thumbnails)
                 }).catch(error => {
                     alert(error, '上传图片出错！')
                 })
