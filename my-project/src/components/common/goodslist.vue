@@ -34,7 +34,7 @@
                             <div class="goods_info">券{{item.Quan_price}}元</div>
                         </flexbox-item>
                         <flexbox-item :span="1.2/3" @click.native="openFriend(item)">
-                            <x-button v-if="!item.Introduce" mini type="warn" class="mini_button">
+                            <x-button v-if="item.is_friendpop" mini type="warn" class="mini_button">
                                 朋友圈文案
                             </x-button>
                             <x-button v-else mini type="" class="mini_button dis">
@@ -79,10 +79,10 @@
                         title="完善朋友圈文案"
                         :show-bottom-border="false">
                 </popup-header>
-                <div class="link">https://detail.tmall.com/item.htm?id={{popInfo.link}}</div>
-                <div class="title">{{popInfo.title}}</div>
+                <div class="link">{{popInfo.link}}</div>
+                <div class="title">{{popInfo.goods_title}}</div>
                 <x-textarea class="textarea_input" title="" :max="200" placeholder="请填写完善朋友圈文案" :show-counter="false"
-                            :rows="8" :cols="30" v-model="popInfo.intro">
+                            :rows="8" :cols="30" v-model="popInfo.content">
                 </x-textarea>
                 <uploader :thumbnails="thumbnails"></uploader>
                 <flexbox :gutter="0" class="button_wrap">
@@ -91,7 +91,7 @@
                         </x-button>
                     </flexbox-item>
                     <flexbox-item :span="1/2">
-                        <x-button mini type="warn" class="share_button" @click.native="confirmPop = !confirmPop">提交
+                        <x-button mini type="warn" class="share_button" @click.native="onSubmit">提交
                         </x-button>
                     </flexbox-item>
                 </flexbox>
@@ -139,8 +139,11 @@
                 confirmPop: false, //确认提示
                 popInfo: {
                     link: '',
-                    title: '',
-                    intro: '',
+                    keyid : '', //商品自增长id
+                    goods_id: '', //商品淘宝id
+                    goods_title: '', //商品标题
+                    content: '', // 朋友圈内容
+                    image: '', // 朋友圈图片，多图以‘#’号分隔
                 },
                 thumbnails: [],
                 page: 1,
@@ -247,9 +250,12 @@
             openFriend (item) {
                 console.log(item)
                 this.friendPop = !this.friendPop
-                this.popInfo.title = item.D_title
-                this.popInfo.link = item.GoodsID
-                this.popInfo.intro = item.Introduce
+                this.popInfo.link = 'https://detail.tmall.com/item.htm?id=' + item.GoodsID
+                this.popInfo.keyid = item.ID //商品自增长id
+                this.popInfo.goods_id = item.GoodsID //商品淘宝id
+                this.popInfo.goods_title = item.D_title
+                this.popInfo.content = item.Introduce
+                this.popInfo.image =  ''// 朋友圈图片，多图以‘#’号分隔
             },
             onShow () {
                 console.log('on show')
@@ -257,6 +263,22 @@
             onHide () {
                 console.log('on hide')
             },
+            onSubmit() {
+                this.confirmPop = !this.confirmPop
+                this.friendPop = !this.friendPop
+                let params = {
+                    keyid : '', //商品自增长id
+                    goods_id: '', //商品淘宝id
+                    goods_title: '', //商品标题
+                    content: '', // 朋友圈内容
+                    image: '', // 朋友圈图片，多图以‘#’号分隔
+                }
+                this.$http.post(`/api/add_friendpop`,params).then(res => {
+                    if(res.data.code == 200){
+                        console.log(res.data)
+                    }
+                });
+            }
         },
         mounted () {
             this.$nextTick(() => {

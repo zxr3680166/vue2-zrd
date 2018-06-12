@@ -125,7 +125,8 @@
 
         },
         created() {
-            // this.initializeData()
+            // 初始化用户数据
+            this.initializeData()
             // this.registerapi()
             // this.routeChange()
             console.log('createApp')
