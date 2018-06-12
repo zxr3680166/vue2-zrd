@@ -85,7 +85,7 @@
                 <x-textarea class="textarea_input" title="" :max="200" placeholder="请填写完善朋友圈文案" :show-counter="false"
                             :rows="8" :cols="30" v-model="popInfo.content">
                 </x-textarea>
-                <uploader :thumbnails="thumbnails"></uploader>
+                <uploader :popInfo="popInfo"></uploader>
                 <flexbox :gutter="0" class="button_wrap">
                     <flexbox-item :span="1/2">
                         <x-button mini type="warn" class="share_button" @click.native="friendPop = !friendPop">取消
@@ -143,7 +143,8 @@
                     goods_id: '', //商品淘宝id
                     goods_title: '', //商品标题
                     content: '', // 朋友圈内容
-                    image: '', // 朋友圈图片，多图以‘#’号分隔
+                    image: [], // 朋友圈图片，多图以‘#’号分隔
+                    market_image: [], //营销主图
                 },
                 thumbnails: [], // 上传图片组
                 page: 1,
@@ -179,8 +180,7 @@
                 }
                 this.loaderMore()
             },
-            thumbnails:  function (value) {
-                this.popInfo.image = this.thumbnails.join("#")
+            popInfo: function (value) {
             },
         },
         updated () {
@@ -258,7 +258,8 @@
                 this.popInfo.goods_id = item.GoodsID //商品淘宝id
                 this.popInfo.goods_title = item.Title
                 this.popInfo.content = item.Introduce
-                this.popInfo.image = ''// 朋友圈图片，多图以‘#’号分隔
+                this.popInfo.image = []// 朋友圈图片，多图以‘#’号分隔
+                this.popInfo.market_image = []// 主图
             },
             onShow () {
                 console.log('on show')
@@ -275,7 +276,11 @@
                     goods_title: '', //商品标题
                     content: '', // 朋友圈内容
                     image: '', // 朋友圈图片，多图以‘#’号分隔
+                    market_image: '',
                 }
+                this.popInfo.market_image = this.popInfo.market_image[0]
+                this.popInfo.image = this.popInfo.image.join("#")
+
                 this.$http.post(`/api/add_friendpop`, this.popInfo).then(res => {
                     console.log(this.popInfo, res.data)
                     if (res.data.code == 200) {

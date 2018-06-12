@@ -2,7 +2,13 @@
     <div class="weui-uploader">
         <div class="weui-uploader__bd">
             <ul class="weui-uploader__files">
-                <li class="weui-uploader__file" v-for="(thumbnail, index) in thumbnails"
+                <li class="weui-uploader__file" v-for="(thumbnail, index) in popInfo.market_image"
+                    :style="{ backgroundImage: `url(${ thumbnail })` }" @click.native="click(index)">
+                    <!--<badge text="X" class="delete" @click.native.stop="deleteImage(index)"></badge>-->
+                </li>
+            </ul>
+            <ul class="weui-uploader__files">
+                <li class="weui-uploader__file" v-for="(thumbnail, index) in popInfo.image"
                     :style="{ backgroundImage: `url(${ thumbnail })` }" @click.native="click(index)">
                     <!--<badge text="X" class="delete" @click.native.stop="deleteImage(index)"></badge>-->
                 </li>
@@ -10,14 +16,14 @@
             <flexbox>
                 <flexbox-item :span="1/2">
                     <div class="weui-uploader__input-box">
-                        <input id="uploaderInput1" @change='add_img' class="weui-uploader__input" type="file"
+                        <input id="uploaderInput1" @change='add_img(1)' class="weui-uploader__input" type="file"
                                accept="image/*" multiple/>
                     </div>
                 </flexbox-item>
 
                 <flexbox-item :span="1/2">
                     <div class="weui-uploader__input-box">
-                        <input id="uploaderInput2" @change='add_img' class="weui-uploader__input" type="file"
+                        <input id="uploaderInput2" @change='add_img(2)' class="weui-uploader__input" type="file"
                                accept="image/*" multiple/>
                     </div>
                 </flexbox-item>
@@ -46,7 +52,7 @@
             }
         },
         props: {
-            thumbnails: Array,
+            popInfo: Object,
         },
         methods: {
             onButtonClick () {
@@ -58,7 +64,7 @@
             deleteImage (index) {
                 this.$emit('on-delete-click', index)
             },
-            add_img (event) {
+            add_img (uploadType) {
                 let reader = new FileReader()
                 let img1 = event.target.files[0]
                 let type = img1.type//文件的类型，判断是否是图片
@@ -74,13 +80,17 @@
                 var uri = ''
                 let form = new FormData()
                 form.append('file', img1, img1.name)
-                // console.log(img1, img1.name)
+                console.log(img1, img1.name,this.popInfo)
 
                 this.$http.post(`/api/uploadFile`, form, {
                     headers: {'Content-Type': 'multipart/form-data'}
                 }).then(response => {
                     uri = 'http://39.105.108.120/' + response.data.data
-                    this.thumbnails.push(uri)
+                    if (uploadType == 1) {
+                        this.popInfo.market_image.push(uri)
+                    } else if (uploadType == 2) {
+                        this.popInfo.image.push(uri)
+                    }
                     // console.log(this.thumbnails)
                 }).catch(error => {
                     alert(error, '上传图片出错！')
