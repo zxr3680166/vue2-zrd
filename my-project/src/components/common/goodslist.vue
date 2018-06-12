@@ -47,7 +47,8 @@
                     </flexbox>
                     <flexbox class="info_detail">
                         <flexbox-item :span="1/2">
-                            <x-button mini type="warn" class="share_button" @click.native="copyTaoPwd(item)">复制淘口令</x-button>
+                            <x-button mini type="warn" class="share_button" @click.native="copyTaoPwd(item)">复制淘口令
+                            </x-button>
                         </flexbox-item>
                         <flexbox-item :span="1/2">
                             <x-button mini type="warn" class="share_button">分享到微信</x-button>
@@ -111,17 +112,16 @@
 
 <script>
     import {
-        AlertModule,
         Alert,
-        XTextarea,
-        TransferDom,
-        PopupHeader,
-        Popup,
-        XButton,
         Flexbox,
         FlexboxItem,
         Group,
-        LoadMore
+        LoadMore,
+        Popup,
+        PopupHeader,
+        TransferDom,
+        XButton,
+        XTextarea
     } from 'vux'
     import { loadMore } from '../../assets/js/mixin'
     import uploader from './Uploader'
@@ -139,13 +139,13 @@
                 confirmPop: false, //确认提示
                 link: '',
                 popInfo: {
-                    keyid : '', //商品自增长id
+                    keyid: '', //商品自增长id
                     goods_id: '', //商品淘宝id
                     goods_title: '', //商品标题
                     content: '', // 朋友圈内容
                     image: '', // 朋友圈图片，多图以‘#’号分隔
                 },
-                thumbnails: [],
+                thumbnails: [], // 上传图片组
                 page: 1,
                 selected: this.classify_selected,
                 oldCid: 0,
@@ -178,6 +178,9 @@
                     this.touchend = false
                 }
                 this.loaderMore()
+            },
+            thumbnails:  function (value) {
+                this.popInfo.image = this.thumbnails.join("#")
             },
         },
         updated () {
@@ -228,16 +231,16 @@
 
             },
             //复制掏口令
-            copyTaoPwd (item){
-                if(!!item.tao_pwd){
-                    location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`;
-                }else{
+            copyTaoPwd (item) {
+                if (!!item.tao_pwd) {
+                    location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`
+                } else {
                     this.$http.get(`/api/get_taobao_tbk_tpwd?id=${item.keyid}`).then(res => {
-                        if(res.data.code == 200){
-                            item.tao_pwd = res.data.data.tao_pwd;
-                            location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`;
-                        }else{
-                            alert(res.data.data);
+                        if (res.data.code == 200) {
+                            item.tao_pwd = res.data.data.tao_pwd
+                            location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`
+                        } else {
+                            alert(res.data.data)
                         }
                     })
                 }
@@ -255,7 +258,7 @@
                 this.popInfo.goods_id = item.GoodsID //商品淘宝id
                 this.popInfo.goods_title = item.D_title
                 this.popInfo.content = item.Introduce
-                this.popInfo.image =  ''// 朋友圈图片，多图以‘#’号分隔
+                this.popInfo.image = ''// 朋友圈图片，多图以‘#’号分隔
             },
             onShow () {
                 console.log('on show')
@@ -263,21 +266,21 @@
             onHide () {
                 console.log('on hide')
             },
-            onSubmit() {
+            onSubmit () {
                 this.confirmPop = !this.confirmPop
                 this.friendPop = !this.friendPop
                 let params = {
-                    keyid : '', //商品自增长id
+                    keyid: '', //商品自增长id
                     goods_id: '', //商品淘宝id
                     goods_title: '', //商品标题
                     content: '', // 朋友圈内容
                     image: '', // 朋友圈图片，多图以‘#’号分隔
                 }
-                this.$http.post(`/api/add_friendpop`,this.popInfo).then(res => {
-                    console.log(res.data)
-                    if(res.data.code == 200){
+                this.$http.post(`/api/add_friendpop`, this.popInfo).then(res => {
+                    console.log(this.popInfo, res.data)
+                    if (res.data.code == 200) {
                     }
-                });
+                })
             }
         },
         mounted () {
