@@ -79,7 +79,7 @@
                         title="完善朋友圈文案"
                         :show-bottom-border="false">
                 </popup-header>
-                <div class="link">{{popInfo.link}}</div>
+                <div class="link">{{link}}</div>
                 <div class="title">{{popInfo.goods_title}}</div>
                 <x-textarea class="textarea_input" title="" :max="200" placeholder="请填写完善朋友圈文案" :show-counter="false"
                             :rows="8" :cols="30" v-model="popInfo.content">
@@ -137,8 +137,8 @@
                 touchend: false, //没有更多数据
                 friendPop: false, //完事朋友圈文案
                 confirmPop: false, //确认提示
+                link: '',
                 popInfo: {
-                    link: '',
                     keyid : '', //商品自增长id
                     goods_id: '', //商品淘宝id
                     goods_title: '', //商品标题
@@ -250,7 +250,7 @@
             openFriend (item) {
                 console.log(item)
                 this.friendPop = !this.friendPop
-                this.popInfo.link = 'https://detail.tmall.com/item.htm?id=' + item.GoodsID
+                this.link = 'https://detail.tmall.com/item.htm?id=' + item.GoodsID
                 this.popInfo.keyid = item.ID //商品自增长id
                 this.popInfo.goods_id = item.GoodsID //商品淘宝id
                 this.popInfo.goods_title = item.D_title
@@ -273,9 +273,9 @@
                     content: '', // 朋友圈内容
                     image: '', // 朋友圈图片，多图以‘#’号分隔
                 }
-                this.$http.post(`/api/add_friendpop`,params).then(res => {
+                this.$http.post(`/api/add_friendpop`,this.popInfo).then(res => {
+                    console.log(res.data)
                     if(res.data.code == 200){
-                        console.log(res.data)
                     }
                 });
             }
