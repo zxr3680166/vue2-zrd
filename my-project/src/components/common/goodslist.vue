@@ -256,7 +256,7 @@
                 this.link = 'https://detail.tmall.com/item.htm?id=' + item.GoodsID
                 this.popInfo.keyid = item.ID //商品自增长id
                 this.popInfo.goods_id = item.GoodsID //商品淘宝id
-                this.popInfo.goods_title = item.D_title
+                this.popInfo.goods_title = item.Title
                 this.popInfo.content = item.Introduce
                 this.popInfo.image = ''// 朋友圈图片，多图以‘#’号分隔
             },
