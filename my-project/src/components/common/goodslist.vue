@@ -33,11 +33,11 @@
                         <flexbox-item :span="1.2/6">
                             <div class="goods_info">券{{item.Quan_price}}元</div>
                         </flexbox-item>
-                        <flexbox-item :span="1.2/3" @click.native="openFriend(item)">
+                        <flexbox-item :span="1.2/3">
                             <x-button v-if="item.is_friendpop" mini type="warn" class="mini_button">
                                 朋友圈文案
                             </x-button>
-                            <x-button v-else mini type="" class="mini_button dis">
+                            <x-button v-else mini type="" class="mini_button dis" @click.native="openFriend(item)">
                                 完善朋友圈
                             </x-button>
                         </flexbox-item>
@@ -47,7 +47,8 @@
                     </flexbox>
                     <flexbox class="info_detail">
                         <flexbox-item :span="1/2">
-                            <x-button mini type="warn" class="share_button" @click.native="copyTaoPwd(item)">复制淘口令</x-button>
+                            <x-button mini type="warn" class="share_button" @click.native="copyTaoPwd(item)">复制淘口令
+                            </x-button>
                         </flexbox-item>
                         <flexbox-item :span="1/2">
                             <x-button mini type="warn" class="share_button">分享到微信</x-button>
@@ -84,7 +85,7 @@
                 <x-textarea class="textarea_input" title="" :max="200" placeholder="请填写完善朋友圈文案" :show-counter="false"
                             :rows="8" :cols="30" v-model="popInfo.content">
                 </x-textarea>
-                <uploader :thumbnails="thumbnails"></uploader>
+                <uploader :popInfo="popInfo"></uploader>
                 <flexbox :gutter="0" class="button_wrap">
                     <flexbox-item :span="1/2">
                         <x-button mini type="warn" class="share_button" @click.native="friendPop = !friendPop">取消
@@ -111,17 +112,16 @@
 
 <script>
     import {
-        AlertModule,
         Alert,
-        XTextarea,
-        TransferDom,
-        PopupHeader,
-        Popup,
-        XButton,
         Flexbox,
         FlexboxItem,
         Group,
-        LoadMore
+        LoadMore,
+        Popup,
+        PopupHeader,
+        TransferDom,
+        XButton,
+        XTextarea
     } from 'vux'
     import { loadMore } from '../../assets/js/mixin'
     import uploader from './Uploader'
@@ -139,13 +139,14 @@
                 confirmPop: false, //确认提示
                 link: '',
                 popInfo: {
-                    keyid : '', //商品自增长id
+                    keyid: '', //商品自增长id
                     goods_id: '', //商品淘宝id
                     goods_title: '', //商品标题
                     content: '', // 朋友圈内容
-                    image: '', // 朋友圈图片，多图以‘#’号分隔
+                    image: [], // 朋友圈图片，多图以‘#’号分隔
+                    market_image: [], //营销主图
                 },
-                thumbnails: [],
+                thumbnails: [], // 上传图片组
                 page: 1,
                 selected: this.classify_selected,
                 oldCid: 0,
@@ -178,6 +179,8 @@
                     this.touchend = false
                 }
                 this.loaderMore()
+            },
+            popInfo: function (value) {
             },
         },
         updated () {
@@ -228,16 +231,16 @@
 
             },
             //复制掏口令
-            copyTaoPwd (item){
-                if(!!item.tao_pwd){
-                    location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`;
-                }else{
+            copyTaoPwd (item) {
+                if (!!item.tao_pwd) {
+                    location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`
+                } else {
                     this.$http.get(`/api/get_taobao_tbk_tpwd?id=${item.keyid}`).then(res => {
-                        if(res.data.code == 200){
-                            item.tao_pwd = res.data.data.tao_pwd;
-                            location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`;
-                        }else{
-                            alert(res.data.data);
+                        if (res.data.code == 200) {
+                            item.tao_pwd = res.data.data.tao_pwd
+                            location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`
+                        } else {
+                            alert(res.data.data)
                         }
                     })
                 }
@@ -253,9 +256,10 @@
                 this.link = 'https://detail.tmall.com/item.htm?id=' + item.GoodsID
                 this.popInfo.keyid = item.ID //商品自增长id
                 this.popInfo.goods_id = item.GoodsID //商品淘宝id
-                this.popInfo.goods_title = item.D_title
+                this.popInfo.goods_title = item.Title
                 this.popInfo.content = item.Introduce
-                this.popInfo.image =  ''// 朋友圈图片，多图以‘#’号分隔
+                this.popInfo.image = []// 朋友圈图片，多图以‘#’号分隔
+                this.popInfo.market_image = []// 主图
             },
             onShow () {
                 console.log('on show')
@@ -263,21 +267,25 @@
             onHide () {
                 console.log('on hide')
             },
-            onSubmit() {
+            onSubmit () {
                 this.confirmPop = !this.confirmPop
                 this.friendPop = !this.friendPop
                 let params = {
-                    keyid : '', //商品自增长id
+                    keyid: '', //商品自增长id
                     goods_id: '', //商品淘宝id
                     goods_title: '', //商品标题
                     content: '', // 朋友圈内容
                     image: '', // 朋友圈图片，多图以‘#’号分隔
+                    market_image: '',
                 }
-                this.$http.post(`/api/add_friendpop`,this.popInfo).then(res => {
-                    console.log(res.data)
-                    if(res.data.code == 200){
+                this.popInfo.market_image = this.popInfo.market_image[0]
+                this.popInfo.image = this.popInfo.image.join("#")
+
+                this.$http.post(`/api/add_friendpop`, this.popInfo).then(res => {
+                    console.log(this.popInfo, res.data)
+                    if (res.data.code == 200) {
                     }
-                });
+                })
             }
         },
         mounted () {
