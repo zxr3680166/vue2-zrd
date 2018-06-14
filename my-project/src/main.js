@@ -12,7 +12,7 @@ import './assets/css/common.css'
 import 'vux/src/styles/1px.less'
 /* 纯css close图标 */
 import 'vux/src/styles/close.less'
-import './components/index'
+// import './components/index'
 import './assets/js/rem'
 
 Vue.use(VueRouter)
@@ -34,7 +34,7 @@ router.afterEach(route => {
     window.onscroll = null
     setTimeout(() => {
         store.commit('updateLoadingStatus', {isLoading: false})
-    }, 250)
+    }, 2000)
 })
 
 store.registerModule('vux', { // 名字自己定义

@@ -107,6 +107,11 @@
                 <a class="integral">[积分用途]</a>
             </alert>
         </div>
+        <div v-transfer-dom>
+            <toast v-model="showPositionValue" :time="800" is-show-mask :type="toastType" :text="toastText"
+                   :position="position" width="16em">{{toastText}}
+            </toast>
+        </div>
     </div>
 </template>
 
@@ -119,6 +124,7 @@
         LoadMore,
         Popup,
         PopupHeader,
+        Toast,
         TransferDom,
         XButton,
         XTextarea
@@ -150,12 +156,17 @@
                 page: 1,
                 selected: this.classify_selected,
                 oldCid: 0,
+                position: 'default',
+                toastText: '',
+                toastType: 'success',
+                showPositionValue: false
             }
         },
         directives: {
             TransferDom
         },
         components: {
+            Toast,
             Alert,
             uploader,
             XTextarea,
@@ -268,30 +279,51 @@
                 console.log('on hide')
             },
             onSubmit () {
-                this.confirmPop = !this.confirmPop
-                this.friendPop = !this.friendPop
+                if (this.popInfo.market_image.length < 1 || this.popInfo.image.length < 3) {
+                    this.showPosition('middle', '请上传1张主图和至少3张晒图', 'warn')
+                    return
+                }
+
                 let params = {
                     keyid: '', //商品自增长id
                     goods_id: '', //商品淘宝id
                     goods_title: '', //商品标题
                     content: '', // 朋友圈内容
-                    image: '', // 朋友圈图片，多图以‘#’号分隔
-                    market_image: '',
+                    image: [], // 朋友圈图片，多图以‘#’号分隔
+                    market_image: [],
                 }
                 this.popInfo.market_image = this.popInfo.market_image[0]
-                this.popInfo.image = this.popInfo.image.join("#")
+                this.popInfo.image = this.popInfo.image.join('#')
 
                 this.$http.post(`/api/add_friendpop`, this.popInfo).then(res => {
-                    console.log(this.popInfo, res.data)
                     if (res.data.code == 200) {
+                        console.log(this.popInfo)
+                        this.confirmPop = !this.confirmPop
+                        this.friendPop = !this.friendPop
+                        this.popInfo = params
+                    } else {
+                        this.showPosition('middle', '未知错误', 'warn')
                     }
                 })
-            }
+            },
+            showPosition (position, text, type) {
+                this.position = position
+                this.toastText = text
+                this.toastType = type
+                this.showPositionValue = true
+            },
+
         },
         mounted () {
             this.$nextTick(() => {
                 this.initData()
             })
+            // this.timer = setInterval(() => {
+            //     // console.log(this.$vux.toast.isVisible())
+            // }, 1000)
+        },
+        beforeDestroy () {
+            // clearInterval(this.timer)
         }
 
     }
@@ -411,6 +443,12 @@
         @include center;
         margin: 0 auto;
         background-color: #fff;
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
+        &::-webkit-scrollbar {
+            width: 0;
+            display: none;
+        }
 
         .popUp_friend_header {
             background-color: $red;
@@ -450,6 +488,7 @@
 
         .button_wrap {
             text-align: center;
+            margin-bottom: 50px;
         }
 
     }

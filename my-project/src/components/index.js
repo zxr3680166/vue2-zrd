@@ -4,11 +4,6 @@
  * @fileoverview
  */
 
-import Vue from 'vue'
-// vux 组件
-
-import { Toast } from 'vux'
-Vue.component('toast', Toast)
 
 export {
 

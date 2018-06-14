@@ -3,13 +3,15 @@
         <div class="weui-uploader__bd">
             <ul class="weui-uploader__files">
                 <li class="weui-uploader__file" v-for="(thumbnail, index) in popInfo.market_image"
-                    :style="{ backgroundImage: `url(http://39.105.108.120/${ thumbnail })` }" @click.native="click(index)">
+                    :style="{ backgroundImage: `url('http://39.105.108.120/${ thumbnail }')` }"
+                    @click.native="click(index)">
                     <!--<badge text="X" class="delete" @click.native.stop="deleteImage(index)"></badge>-->
                 </li>
             </ul>
             <ul class="weui-uploader__files">
                 <li class="weui-uploader__file" v-for="(thumbnail, index) in popInfo.image"
-                    :style="{ backgroundImage: `url('http://39.105.108.120/${ thumbnail })'` }" @click.native="click(index)">
+                    :style="{ backgroundImage: `url('http://39.105.108.120/${ thumbnail }')` }"
+                    @click.native="click(index)">
                     <!--<badge text="X" class="delete" @click.native.stop="deleteImage(index)"></badge>-->
                 </li>
             </ul>
@@ -37,18 +39,27 @@
                 </flexbox-item>
             </flexbox>
         </div>
+        <div v-transfer-dom>
+            <toast v-model="showPositionValue" :time="800" is-show-mask :type="toastType" :text="toastText"
+                   :position="position" width="10em">{{toastText}}
+            </toast>
+        </div>
     </div>
 </template>
 
 <script>
-    import { Badge, Flexbox, FlexboxItem } from 'vux'
+    import { Badge, Flexbox, FlexboxItem, Toast, TransferDom } from 'vux'
 
     export default {
         data () {
             return {
                 imgData: {
                     accept: 'image/gif, image/jpeg, image/png, image/jpg',
-                }
+                },
+                position: 'default',
+                toastText: '',
+                toastType: 'text',
+                showPositionValue: false
             }
         },
         props: {
@@ -70,35 +81,50 @@
                 let type = img1.type//文件的类型，判断是否是图片
                 let size = img1.size//文件的大小，判断图片的大小
                 if (this.imgData.accept.indexOf(type) == -1) {
-                    alert('请选择我们支持的图片格式！')
+                    this.showPosition('top', '请选择正确图片格式', 'text')
                     return false
                 }
                 if (size > 1048576) {
-                    alert('请选择1M以内的图片！')
+                    this.showPosition('top', '请选择1M以内的图片', 'text')
                     return false
                 }
                 var uri = ''
                 let form = new FormData()
                 form.append('file', img1, img1.name)
-                console.log(img1, img1.name,this.popInfo)
+                console.log(img1, img1.name, this.popInfo)
 
                 this.$http.post(`/api/uploadFile`, form, {
                     headers: {'Content-Type': 'multipart/form-data'}
                 }).then(response => {
                     console.log(response.data)
-
-                    uri = response.data.data
-                    if (uploadType == 1) {
-                        this.popInfo.market_image.push(uri)
-                    } else if (uploadType == 2) {
-                        this.popInfo.image.push(uri)
+                    if (response.data.code == 200) {
+                        this.showPosition('top', '上传成功', 'text')
+                        uri = response.data.data
+                        if (uploadType == 1) {
+                            this.popInfo.market_image = []
+                            this.popInfo.market_image.push(uri)
+                        } else if (uploadType == 2) {
+                            this.popInfo.image.push(uri)
+                        }
+                    } else {
+                        this.showPosition('top', '上传失败', 'text')
                     }
                 }).catch(error => {
                     alert(error, '上传图片出错！')
                 })
             },
+            showPosition (position, text, type) {
+                this.position = position
+                this.toastText = text
+                this.toastType = type
+                this.showPositionValue = true
+            },
+        },
+        directives: {
+            TransferDom
         },
         components: {
+            Toast,
             Badge,
             Flexbox,
             FlexboxItem,
