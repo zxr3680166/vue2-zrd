@@ -282,6 +282,9 @@
                 if (this.popInfo.market_image.length < 1 || this.popInfo.image.length < 3) {
                     this.showPosition('middle', '请上传1张主图和至少3张晒图', 'warn')
                     return
+                } else {
+                    this.confirmPop = !this.confirmPop
+                    this.friendPop = !this.friendPop
                 }
 
                 let params = {
@@ -298,8 +301,6 @@
                 this.$http.post(`/api/add_friendpop`, this.popInfo).then(res => {
                     if (res.data.code == 200) {
                         console.log(this.popInfo)
-                        this.confirmPop = !this.confirmPop
-                        this.friendPop = !this.friendPop
                         this.popInfo = params
                     } else {
                         this.showPosition('middle', '未知错误', 'warn')
