@@ -2,17 +2,17 @@
     <div class="weui-uploader">
         <div class="weui-uploader__bd">
             <ul class="weui-uploader__files">
-                <li class="weui-uploader__file" v-for="(thumbnail, index) in popInfo.market_image"
+                <li class="weui-uploader__file uploadImage" v-for="(thumbnail, index) in popInfo.market_image"
                     :style="{ backgroundImage: `url('http://39.105.108.120/${ thumbnail }')` }"
                     @click.native="click(index)">
-                    <!--<badge text="X" class="delete" @click.native.stop="deleteImage(index)"></badge>-->
+                    <badge text="x" class="delete" @click.native.stop="deleteImage(popInfo.market_image,index)"></badge>
                 </li>
             </ul>
             <ul class="weui-uploader__files">
-                <li class="weui-uploader__file" v-for="(thumbnail, index) in popInfo.image"
+                <li class="weui-uploader__file uploadImage" v-for="(thumbnail, index) in popInfo.image"
                     :style="{ backgroundImage: `url('http://39.105.108.120/${ thumbnail }')` }"
                     @click.native="click(index)">
-                    <!--<badge text="X" class="delete" @click.native.stop="deleteImage(index)"></badge>-->
+                    <badge text="x" class="delete" @click.native.stop="deleteImage(popInfo.image,index)"></badge>
                 </li>
             </ul>
             <flexbox>
@@ -72,8 +72,8 @@
             click (index) {
                 this.$emit('on-item-click', index)
             },
-            deleteImage (index) {
-                this.$emit('on-delete-click', index)
+            deleteImage (arr, index) {
+                arr.splice(index, 1)
             },
             add_img (uploadType) {
                 let reader = new FileReader()
@@ -135,8 +135,21 @@
 <style lang="less">
     @import '~vux/src/styles/weui/widget/weui-uploader/index.less';
 
-    .delete {
-        float: right;
+    .uploadImage {
+        width: 130px;
+        height: 130px;
+        margin-right: 9px;
+
+        .delete {
+            float: right;
+            line-height: 30px;
+        }
+    }
+    .uploadImage:nth-last-child(1) {
+        margin-right: 0;
+    }
+    .uploadImage:nth-child(1) {
+        margin-right: 9px;
     }
 
     .weui-uploader {
@@ -145,6 +158,13 @@
 
         .weui-uploader__bd {
             margin: 0;
+
+            .weui-uploader__files {
+            }
+
+            .weui-uploader__file {
+
+            }
 
             .weui-uploader__input-box {
                 margin: 0 auto;
