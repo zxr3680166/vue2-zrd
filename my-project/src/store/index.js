@@ -33,7 +33,13 @@ const state = {
     classify_selected: {// 分类选择
         cid: 0,
         name: '',
-    }
+    },
+    isSearching: {
+        state : false
+    },
+    hackReset: {
+        state : true
+    },
 }
 
 export default new Vuex.Store({

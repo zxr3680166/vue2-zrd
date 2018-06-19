@@ -2,7 +2,7 @@
 
     <div class="home">
         <!-- 搜索栏 -->
-        <head-nav></head-nav>
+        <head-nav :index="index" :type="index" :cid="classify_selected.cid" :goodsList="goodsList"></head-nav>
 
         <!-- 顶部导航 -->
         <tab class="homeTab" :line-width="3" custom-bar-width="60px"
@@ -18,7 +18,8 @@
             <swiper-item class="swiperItem" v-for="(item, index) in tabList" :key="index">
                 <div class="tab-swiper vux-center">
                     <!-- 商品列表 -->
-                    <goods-list v-if="hasGetData" :type="index" :cid="classify_selected.cid"></goods-list>
+                    <goods-list v-if="hackReset.state" :type="index" :cid="classify_selected.cid"
+                                :goodsList="goodsList[index]"></goods-list>
                 </div>
             </swiper-item>
         </swiper>
@@ -34,21 +35,22 @@
     import headNav from '../../components/header/head'
     import goodsList from '../../components/common/goodsList'
     import backToTop from '../../components/common/backToTop'
-    import { Tab, TabItem, Swiper, SwiperItem } from 'vux'
-    import { mapState } from 'vuex'
+    import {Tab, TabItem, Swiper, SwiperItem} from 'vux'
+    import {mapState} from 'vuex'
 
     export default {
         name: 'home',
-        data () {
+        data() {
             return {
                 tabList: ['实时排行', '精选高佣', '秒杀', '聚划算', '淘抢购', '全部商品'],
+                goodsList: [[], [], [], [], [], [],],// 商品列表数据
                 index: 0,
-                hasGetData: true,
             }
         },
         computed: {
             ...mapState([
                 'classify_selected',
+                'hackReset'
             ]),
         },
         components: {
@@ -60,6 +62,12 @@
             Swiper,
             SwiperItem
         },
+        mounted() {
+            this.$nextTick(() => {
+                this.hackReset.state = true
+            })
+        },
+
     }
 </script>
 

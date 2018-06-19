@@ -34,20 +34,26 @@
                 <group gutter="0">
                     <checker v-model="classify" radio-required default-item-class="checkr-item"
                              selected-item-class="checkr-item-selected" @on-change="onChange">
-                        <checker-item v-for="(item,idx) in classifyList" :value='idx' :key="idx">{{item.name}}</checker-item>
+                        <checker-item v-for="(item,idx) in classifyList" :value='idx' :key="idx">{{item.name}}
+                        </checker-item>
                     </checker>
                 </group>
             </popup>
         </div>
+        <div v-transfer-dom>
+            <toast v-model="showPositionValue" :time="800" is-show-mask :type="toastType" :text="toastText"
+                   :position="position" width="12em">{{toastText}}
+            </toast>
+        </div>
     </div>
 </template>
 <script>
-    import { Group, Checker, CheckerItem, TransferDom, PopupHeader, Popup, XHeader, Search, Toast } from 'vux'
-    import { mapState } from 'vuex'
+    import {Group, Checker, CheckerItem, TransferDom, PopupHeader, Popup, XHeader, Search, Toast} from 'vux'
+    import {mapState} from 'vuex'
 
     export default {
         name: 'head-nav',
-        data () {
+        data() {
             return {
                 showPop: false, // 分类导航弹出
                 classify: '', // 分类选择
@@ -102,14 +108,22 @@
                 showHeader: true,
                 results: [],
                 searchValue: '',
+                keyword: '',
+                position: 'default',
+                toastText: '',
+                toastType: 'success',
+                showPositionValue: false
             }
         },
         computed: {
             ...mapState([
                 'classify_selected',
+                'isSearching',
+                'hackReset',
             ]),
 
         },
+        props: ['index', 'type', 'cid', 'goodsList'],
         directives: {
             TransferDom
         },
@@ -124,44 +138,74 @@
             Search,
         },
         methods: {
-            setFocus () {
+            setFocus() {
                 this.$refs.search.setFocus()
             },
-            resultClick (item) {
-                window.alert('you click the result item: ' + JSON.stringify(item))
+            resultClick(item) {
+                // window.alert('you click the result item: ' + JSON.stringify(item))
+                this.onSubmit()
             },
-            getResult (val) {
-                console.log('on-change', val)
+            getResult(val) {
+                // console.log('on-change', val)
                 this.results = val ? this._getResult(this.searchValue) : []
             },
-            _getResult (val) {
+            _getResult(val) {
                 let rs = []
-                for (let i = 0; i < 20; i++) {
-                    rs.push({
-                        title: `${val} result: ${i + 1} `,
-                        other: i
-                    })
-                }
+                rs.push({
+                    title: `关键词：${val}<------点击搜索`,
+                    other: 0
+                })
                 return rs
             },
-            onSubmit () {
+            onSubmit() {
                 this.$refs.search.setBlur()
-                this.$vux.toast.show({
-                    type: 'text',
-                    position: 'top',
-                    text: 'on submit'
+
+                let params = {
+                    type: this.type,
+                    // page : 1,
+                    cid: this.cid,
+                    keyword: this.searchValue
+                }
+
+                console.log('on-submit', params)
+
+                this.$http.post(`/api/get_dtk_search_list`, params).then(res => {
+                    // console.log(res.data)
+                    if (res.data.code == 200) {
+                        if (res.data.data.list.length != 0) {
+                            this.goodsList[this.index] = res.data.data.list
+                            this.isSearching.state = true
+                            this.hackReset.state = false
+                        }
+                        console.log('搜索结果长度:',this.goodsList[this.index].length)
+                        this.hackReset.state = true
+                    } else {
+                        this.showPosition('middle', res.data.data, 'warn')
+                    }
                 })
+
             },
-            onFocus () {
-                console.log('on focus')
+            onFocus() {
+                // console.log('on focus')
             },
-            onCancel () {
-                console.log('on cancel')
+            onCancel() {
+                // console.log('on cancel')
+                this.isSearching.state = false
+                this.goodsList[this.index] = []
+                this.hackReset.state = false
+                this.hackReset.state = true
             },
-            onChange () {
+            onChange() {
                 this.classify_selected.cid = this.classifyList[this.classify].cid
                 this.classify_selected.name = this.classifyList[this.classify].name
-            }
+            },
+            showPosition(position, text, type) {
+                this.position = position
+                this.toastText = text
+                this.toastType = type
+                this.showPositionValue = true
+            },
+
 
         }
     }
@@ -190,6 +234,12 @@
         .vux-header-title-area {
             margin: 0 30px 0 88px;
         }
+
+        .weui-cells.vux-search_show .weui-cell:last-child {
+            margin-bottom: 5px;
+            border-bottom: 3px solid $red;
+        }
+
     }
 
     .popUp_nav {

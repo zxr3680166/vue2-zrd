@@ -131,6 +131,7 @@
     } from 'vux'
     import { loadMore } from '../../assets/js/mixin'
     import uploader from './Uploader'
+    import {mapState} from 'vuex'
 
     export default {
         data () {
@@ -162,6 +163,11 @@
                 showPositionValue: false
             }
         },
+        computed: {
+            ...mapState([
+                'isSearching',
+            ]),
+        },
         directives: {
             TransferDom
         },
@@ -179,19 +185,27 @@
             FlexboxItem,
         },
         mixins: [loadMore],
-        props: ['type', 'cid'],
+        props: ['type', 'cid','goodsList'],
         watch: {
             //cid，当值发生变化的时候重新监听
             cid: function (value) {
                 // console.log('载入分类数据', this.oldCid, this.cid)
-
                 if (this.oldCid != this.cid) {
                     this.page = 1
                     this.touchend = false
                 }
                 this.loaderMore()
             },
-            popInfo: function (value) {
+            goodsList: function (value) {
+                if (this.goodsList.length !=0 ) {
+                    console.log('替换搜索列表',this.type)
+                    this.goodsListArr = this.goodsList
+                } else {
+                    //获取数据
+                    this.page = 1
+                    this.goodsListArr = []
+                    this.getList(this.page)
+                }
             },
         },
         updated () {
@@ -200,7 +214,6 @@
             async initData () {
                 //获取数据
                 this.getList(this.page)
-
             },
             getList (page) {
 
@@ -228,7 +241,7 @@
             },
             //到达底部加载更多数据
             async loaderMore () {
-                if (this.touchend) {
+                if (this.touchend || this.isSearching) {
                     return
                 }
                 //防止重复请求
