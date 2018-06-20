@@ -263,7 +263,7 @@
             },
             //到达底部加载更多数据
             async loaderMore() {
-                if (this.touchend || this.isSearching) {
+                if (this.touchend || this.isSearching.state) {
                     return
                 }
                 //防止重复请求
