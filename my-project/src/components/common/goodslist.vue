@@ -282,7 +282,7 @@
                 if (!!item.tao_pwd) {
                     this.copyText = item.D_title
                         + '\n原价' + item.Org_Price + '  券后' + item.Quan_price + '\n'
-                        + '-----抢购方式--------\n'
+                        + '--------抢购方式--------\n'
                         + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
                     this.pwdPop = true
                     // this.copy()
