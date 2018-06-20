@@ -176,9 +176,9 @@
                             this.goodsList[this.index] = res.data.data.list
                             this.isSearching.state = true
                             this.hackReset.state = false
+                            this.hackReset.state = true
                         }
                         console.log('搜索结果长度:',this.goodsList[this.index].length)
-                        this.hackReset.state = true
                     } else {
                         this.showPosition('middle', res.data.data, 'warn')
                     }
