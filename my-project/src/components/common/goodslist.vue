@@ -112,6 +112,24 @@
                    :position="position" width="16em">{{toastText}}
             </toast>
         </div>
+
+        <div v-transfer-dom>
+            <popup v-model="pwdPop" class="popUp_pwd">
+                <popup-header
+                        class="popUp_friend_header"
+                        title="复制淘口令"
+                        :show-bottom-border="false">
+                </popup-header>
+                <x-textarea class="textarea_input" title="" :max="200" placeholder="淘口令" :show-counter="false"
+                            :rows="8" :cols="30" v-model="copyText">
+                </x-textarea>
+
+                <x-button type="primary" class="share_button copy-TaoPwd" :data-clipboard-text="copyText"
+                          @click.native="copy">点击复制
+                </x-button>
+
+            </popup>
+        </div>
     </div>
 </template>
 
@@ -129,12 +147,13 @@
         XButton,
         XTextarea
     } from 'vux'
-    import { loadMore } from '../../assets/js/mixin'
+    import {loadMore} from '../../assets/js/mixin'
     import uploader from './Uploader'
     import {mapState} from 'vuex'
+    import Clipboard from 'clipboard'
 
     export default {
-        data () {
+        data() {
             return {
                 offset: 0, // 批次加载商品列表，每次加载20个 limit = 20
                 goodsListArr: [],// 商品列表数据
@@ -160,12 +179,15 @@
                 position: 'default',
                 toastText: '',
                 toastType: 'success',
-                showPositionValue: false
+                showPositionValue: false,
+                copyText: '',
+                pwdPop: false,
             }
         },
         computed: {
             ...mapState([
                 'isSearching',
+                'hackReset',
             ]),
         },
         directives: {
@@ -185,7 +207,7 @@
             FlexboxItem,
         },
         mixins: [loadMore],
-        props: ['type', 'cid','goodsList'],
+        props: ['type', 'cid', 'goodsList'],
         watch: {
             //cid，当值发生变化的时候重新监听
             cid: function (value) {
@@ -197,8 +219,8 @@
                 this.loaderMore()
             },
             goodsList: function (value) {
-                if (this.goodsList.length !=0 ) {
-                    console.log('替换搜索列表',this.type)
+                if (this.goodsList.length != 0) {
+                    console.log('替换搜索列表', this.type)
                     this.goodsListArr = this.goodsList
                 } else {
                     //获取数据
@@ -208,14 +230,14 @@
                 }
             },
         },
-        updated () {
+        updated() {
         },
         methods: {
-            async initData () {
+            async initData() {
                 //获取数据
                 this.getList(this.page)
             },
-            getList (page) {
+            getList(page) {
 
                 this.$http.get(`api/get_dtk_goods_list?type=${this.type}&page=${page}&cid=${this.cid}`).then(res => {
 
@@ -240,7 +262,7 @@
                 })
             },
             //到达底部加载更多数据
-            async loaderMore () {
+            async loaderMore() {
                 if (this.touchend || this.isSearching) {
                     return
                 }
@@ -255,27 +277,42 @@
 
             },
             //复制掏口令
-            copyTaoPwd (item) {
+            copyTaoPwd(item) {
+                // console.log(!!item.tao_pwd)
                 if (!!item.tao_pwd) {
-                    location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`
+                    this.copyText = item.D_title
+                        + '\n原价' + item.Org_Price + '  券后' + item.Quan_price + '\n'
+                        + '-----抢购方式--------\n'
+                        + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
+                    this.pwdPop = true
+                    // this.copy()
+                    // location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`
                 } else {
                     this.$http.get(`/api/get_taobao_tbk_tpwd?id=${item.keyid}`).then(res => {
+                        // console.log(res.data)
                         if (res.data.code == 200) {
                             item.tao_pwd = res.data.data.tao_pwd
-                            location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`
+                            this.copyText = item.D_title
+                                + '\n原价' + item.Org_Price + '  券后' + item.Quan_price + '\n'
+                                + '-----抢购方式--------\n'
+                                + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
+                            this.pwdPop = true
+                            // this.copy()
+                            // location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`
                         } else {
-                            alert(res.data.data)
+                            // alert(res.data.data)
+                            this.showPosition('middle', res.data.data, 'warn')
                         }
                     })
                 }
             },
 
             //开发环境与编译环境loading隐藏方式不同
-            hideLoading () {
+            hideLoading() {
                 this.showLoading = false
             },
-            openFriend (item) {
-                console.log(item)
+            openFriend(item) {
+                // console.log(item)
                 this.friendPop = !this.friendPop
                 this.link = 'https://detail.tmall.com/item.htm?id=' + item.GoodsID
                 this.popInfo.keyid = item.ID //商品自增长id
@@ -285,13 +322,13 @@
                 this.popInfo.image = []// 朋友圈图片，多图以‘#’号分隔
                 this.popInfo.market_image = []// 主图
             },
-            onShow () {
+            onShow() {
                 console.log('on show')
             },
-            onHide () {
+            onHide() {
                 console.log('on hide')
             },
-            onSubmit () {
+            onSubmit() {
                 if (this.popInfo.market_image.length < 1 || this.popInfo.image.length < 3) {
                     this.showPosition('middle', '请上传1张主图和至少3张晒图', 'warn')
                     return
@@ -320,15 +357,33 @@
                     }
                 })
             },
-            showPosition (position, text, type) {
+            showPosition(position, text, type) {
                 this.position = position
                 this.toastText = text
                 this.toastType = type
                 this.showPositionValue = true
             },
+            copy() {
+                const clipboard = new Clipboard('.copy-TaoPwd')
+                clipboard.on('success', e => {
+                    // console.log('复制成功')
+                    this.showPosition('middle', '复制成功', 'success')
+                    // 释放内存
+                    clipboard.destroy()
+                })
+                clipboard.on('error', e => {
+                    // console.log('复制失败')
+                    // 不支持复制
+                    this.showPosition('middle', '复制失败，请重试', 'warn')
+                    // 释放内存
+                    clipboard.destroy()
+                })
+                // document.getElementsByClassName("copy-TaoPwd")[this.type].click()
+                this.pwdPop = false
+            },
 
         },
-        mounted () {
+        mounted() {
             this.$nextTick(() => {
                 this.initData()
             })
@@ -336,7 +391,7 @@
             //     // console.log(this.$vux.toast.isVisible())
             // }, 1000)
         },
-        beforeDestroy () {
+        beforeDestroy() {
             // clearInterval(this.timer)
         }
     }
@@ -450,6 +505,7 @@
 
     }
 
+    .popUp_pwd,
     .popUp_friend {
         @include borderRadius(10px);
         @include wh(630px, 894px);
@@ -506,6 +562,10 @@
 
     }
 
+    .popUp_pwd {
+        @include wh(630px, 500px);
+    }
+
     .confirm {
         em {
             color: $red;
@@ -552,5 +612,9 @@
         .icon-color {
             fill: #fff;
         }
+    }
+
+    .copy-TaoPwd {
+        width: 80%;
     }
 </style>
