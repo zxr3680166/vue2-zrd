@@ -1,9 +1,11 @@
 <template>
     <div :id="'goodslist_' + type" class="goodslist_container loadmore" v-load-more="loaderMore">
         <ul v-if="goodsListArr.length" type="1">
-            <li v-for="item in goodsListArr" class="goods_li" :key="item.ID">
-                <section>
-                    <img :src="item.Pic" class="goods_img">
+            <li v-for="(item,index) in goodsListArr" class="goods_li" :key="item.ID">
+                <section class="imgWrapper">
+                    <x-icon type="bookmark" class="bookmark" size="35" text="111"></x-icon>
+                    <div class="bookmark_num">{{index+1}}</div>
+                    <img :src="item.Pic.indexOf('item_pic') ? item.Pic + '_430x430q90.jpg' : item.Pic + '_400x400.jpg_.webp'" class="goods_img">
                 </section>
                 <group class="goods_right" :gutter="0">
                     <header class="goods_detail_header">
@@ -419,13 +421,38 @@
         display: flex;
         margin: 5px 0;
         background-color: $fc;
+
+        .imgWrapper {
+            position: relative;
+            overflow: hidden;
+
+            .bookmark {
+                fill:#59bdb5;
+                position:absolute;
+                top: -10px;
+                left: -6px;
+                transform: scale(1.8,1.2);
+            }
+            .bookmark_num {
+                @include sc(12px, $fc);
+                position:absolute;
+                top: 0px;
+                left: 0px;
+                text-align: center;
+                line-height: 35px;
+                width: 47px;
+                z-index: 99;
+            }
+
+            .goods_img {
+                @include wh(270px, 270px);
+                display: block;
+                margin-right: 5px;
+            }
+        }
+
     }
 
-    .goods_img {
-        @include wh(270px, 270px);
-        display: block;
-        margin-right: 5px;
-    }
 
     .list_back_li {
         height: 261px;
