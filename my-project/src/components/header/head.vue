@@ -3,7 +3,7 @@
         <x-header class="header"
                   :class="{'hide': !showHeader}"
                   title="slot:overwrite-title"
-                  :left-options="{backText: '朋友圈文案'}">
+                  :left-options="{showBack: false}">
             <search class="search_Bar"
                     slot="overwrite-title"
                     @result-click="resultClick"
@@ -57,54 +57,43 @@
             return {
                 showPop: false, // 分类导航弹出
                 classify: '', // 分类选择
-                classifyList: [
-                    {
-                        cid: 0,
-                        name: '全部',
-                    }, {
-                        cid: 1,
-                        name: '女装',
-                    }, {
-                        cid: 9,
-                        name: '男装',
-                    }, {
-                        cid: 5,
-                        name: '鞋品',
-                    }, {
-                        cid: 11,
-                        name: '箱包',
-                    }, {
-                        cid: 2,
-                        name: '母婴',
-                    }, {
-                        cid: 3,
-                        name: '美妆',
-                    }, {
-                        cid: 10,
-                        name: '内衣',
-                    }, {
-                        cid: 12,
-                        name: '配饰',
-                    }, {
-                        cid: 6,
-                        name: '美食',
-                    }, {
-                        cid: 8,
-                        name: '数码家电',
-                    }, {
-                        cid: 4,
-                        name: '居家日用',
-                    }, {
-                        cid: 14,
-                        name: '家装家纺',
-                    }, {
-                        cid: 7,
-                        name: '文娱车品',
-                    }, {
-                        cid: 13,
-                        name: '户外运动',
-                    },
-                ],
+                classifyList: [{
+                    cid: 1,
+                    name: '女装',
+                }, {
+                    cid: 2,
+                    name: '男装',
+                }, {
+                    cid: 3,
+                    name: '内衣',
+                }, {
+                    cid: 4,
+                    name: '母婴',
+                }, {
+                    cid: 5,
+                    name: '美妆',
+                }, {
+                    cid: 6,
+                    name: '居家',
+                }, {
+                    cid: 7,
+                    name: '鞋包配饰',
+                }, {
+                    cid: 8,
+                    name: '美食',
+                }, {
+                    cid: 9,
+                    name: '文体车品',
+                }, {
+                    cid: 10,
+                    name: '数码家电',
+                }, {
+                    cid: 11,
+                    name: '运动户外',
+                }, {
+                    cid: 12,
+                    name: '其他',
+                }],
                 showHeader: true,
                 results: [],
                 searchValue: '',
@@ -123,7 +112,7 @@
             ]),
 
         },
-        props: ['index', 'type', 'cid', 'goodsList'],
+        props: ['type', 'index', 'cid', 'goodsList'],
         directives: {
             TransferDom
         },
@@ -161,7 +150,8 @@
                 this.$refs.search.setBlur()
 
                 let params = {
-                    type: this.type,
+                    // type: this.index,
+                    type: this.index == 0 ? 'paoliang' : 'so',
                     // page : 1,
                     cid: this.cid,
                     keyword: this.searchValue
@@ -178,7 +168,7 @@
                             this.hackReset.state = false
                             this.hackReset.state = true
                         }
-                        console.log('搜索结果长度:',this.goodsList[this.index].length)
+                        console.log('搜索结果长度:', this.goodsList[this.index].length)
                     } else {
                         this.showPosition('middle', res.data.data, 'warn')
                     }
@@ -233,7 +223,8 @@
         }
 
         .vux-header-title-area {
-            margin: 0 30px 0 88px;
+            /*margin: 0 30px 0 88px;*/
+            margin: 0 30px 0 0px;
         }
 
         .weui-cells.vux-search_show .weui-cell:last-child {

@@ -5,7 +5,8 @@
                 <section class="imgWrapper">
                     <x-icon type="bookmark" class="bookmark" size="35" text="111"></x-icon>
                     <div class="bookmark_num">{{index+1}}</div>
-                    <img :src="item.Pic.indexOf('item_pic') ? item.Pic + '_430x430q90.jpg' : item.Pic + '_400x400.jpg_.webp'" class="goods_img">
+                    <img :src="item.Pic.indexOf('item_pic') ? item.Pic + '_430x430q90.jpg' : item.Pic + '_400x400.jpg_.webp'"
+                         class="goods_img">
                 </section>
                 <group class="goods_right" :gutter="0">
                     <header class="goods_detail_header">
@@ -209,8 +210,9 @@
             FlexboxItem,
         },
         mixins: [loadMore],
-        props: ['type', 'cid', 'goodsList'],
+        props: ['index','type', 'cid', 'goodsList'],
         watch: {
+
             //cid，当值发生变化的时候重新监听
             cid: function (value) {
                 // console.log('载入分类数据', this.oldCid, this.cid)
@@ -428,15 +430,15 @@
             overflow: hidden;
 
             .bookmark {
-                fill:#59bdb5;
-                position:absolute;
+                fill: #59bdb5;
+                position: absolute;
                 top: -10px;
                 left: -6px;
-                transform: scale(1.8,1.2);
+                transform: scale(1.8, 1.2);
             }
             .bookmark_num {
                 @include sc(12px, $fc);
-                position:absolute;
+                position: absolute;
                 top: 0px;
                 left: 0px;
                 text-align: center;
@@ -453,7 +455,6 @@
         }
 
     }
-
 
     .list_back_li {
         height: 261px;
