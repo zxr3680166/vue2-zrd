@@ -2,7 +2,7 @@
 
     <div class="home">
         <!-- 搜索栏 -->
-        <head-nav :index="index" :type="index" :cid="classify_selected.cid" :goodsList="goodsList"></head-nav>
+        <head-nav :type="types[index]" :index="index" :cid="classify_selected.cid" :goodsList="goodsList"></head-nav>
 
         <!-- 顶部导航 -->
         <tab class="homeTab" :line-width="3" custom-bar-width="60px"
@@ -18,8 +18,8 @@
             <swiper-item class="swiperItem" v-for="(item, index) in tabList" :key="index">
                 <div class="tab-swiper vux-center">
                     <!-- 商品列表 -->
-                    <goods-list v-if="hackReset.state" :type="index" :cid="classify_selected.cid"
-                                :goodsList="goodsList[index]"></goods-list>
+                    <goods-list v-if="hackReset.state" :index="index" :cid="classify_selected.cid"
+                                :goodsList="goodsList[index]" :type="types[index]"></goods-list>
                 </div>
             </swiper-item>
         </swiper>
@@ -42,8 +42,9 @@
         name: 'home',
         data() {
             return {
-                tabList: ['聚划算', '淘抢购', '大牌推荐', '全部商品'],
-                goodsList: [[], [], [], []],// 商品列表数据
+                tabList: ['实时排行', '聚划算', '淘抢购', '大牌推荐', '全部商品'],
+                types: ['paoliang', 'www_lingquan', 'tqg', 'jhs', 'dapai'],
+                goodsList: [[], [], [], [], []],// 商品列表数据
                 index: 0,
             }
         },
