@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import mutations from './mutations'
 import actions from './action'
 
+
 Vue.use(Vuex)
 
 const state = {
@@ -30,9 +31,11 @@ const state = {
         unionid: null,
 
     },
-    classify_selected: {// 分类选择
+    classify_selected: {// 分类选择+搜索
         cid: 0,
-        name: '',
+        name: '分类结果',
+        keyword: '', //搜索关键词
+        goodsListArr: [],//分类和搜索结果
     },
     isSearching: {
         state : false

@@ -1,7 +1,7 @@
 <template>
-    <div :id="'goodslist_' + type" class="goodslist_container loadmore" v-load-more="loaderMore">
-        <ul v-if="goodsListArr.length" type="1">
-            <li v-for="(item,index) in goodsListArr" class="goods_li" :key="item.ID">
+    <div :id="'goodslist_' + index" class="goodslist_container loadmore" v-load-more="loaderMore">
+        <ul v-if="classify_selected.goodsListArr.length" type="1">
+            <li v-for="(item,index) in classify_selected.goodsListArr" class="goods_li" :key="item.GoodsID">
                 <section class="imgWrapper">
                     <x-icon type="bookmark" class="bookmark" size="35" text="111"></x-icon>
                     <div class="bookmark_num">{{index+1}}</div>
@@ -159,7 +159,6 @@
         data() {
             return {
                 offset: 0, // 批次加载商品列表，每次加载20个 limit = 20
-                goodsListArr: [],// 商品列表数据
                 preventRepeatReuqest: false, //到达底部加载数据，防止重复加载
                 showBackStatus: false, //显示返回顶部按钮
                 showLoading: false, //显示加载动画
@@ -177,6 +176,7 @@
                 },
                 thumbnails: [], // 上传图片组
                 page: 1,
+                // selected: this.classify_selected,
                 oldCid: 0,
                 position: 'default',
                 toastText: '',
@@ -188,6 +188,7 @@
         },
         computed: {
             ...mapState([
+                'classify_selected',
                 'isSearching',
                 'hackReset',
             ]),
@@ -209,7 +210,7 @@
             FlexboxItem,
         },
         mixins: [loadMore],
-        props: ['index','type', 'cid', 'goodsList'],
+        props: ['index','cid',],
         watch: {
             //cid，当值发生变化的时候重新监听
             cid: function (value) {
@@ -218,18 +219,7 @@
                     this.page = 1
                     this.touchend = false
                 }
-                // this.loaderMore()
-            },
-            goodsList: function (value) {
-                if (this.goodsList.length != 0) {
-                    console.log('替换搜索列表', this.type)
-                    this.goodsListArr = this.goodsList
-                } else {
-                    //获取数据
-                    this.page = 1
-                    this.goodsListArr = []
-                    this.getList(this.page)
-                }
+                this.loaderMore()
             },
         },
         updated() {
@@ -241,21 +231,27 @@
             },
             getList(page) {
 
-                this.$http.get(`api/get_dtk_goods_list?type=${this.type}&page=${page}&cid=${this.cid}`).then(res => {
+                let params = {
+                    type: this.classify_selected.name, //商品自增长id
+                    cid: this.classify_selected.cid, //商品淘宝id
+                    page: page, //商品标题
+                    keyword: this.classify_selected.keyword, // 朋友圈内容
+                }
+
+                this.$http.post(`/api/get_tkjd_goods_list`, params).then(res => {
+                    console.log('分类和搜索参数',params,res.data)
 
                     if (this.oldCid === this.cid) {
-                        // console.log('加载更多')
-                        this.goodsListArr = this.goodsListArr.concat(res.data.data.list)
+                        this.classify_selected.goodsListArr = this.classify_selected.goodsListArr.concat(res.data.data.list)
                     } else {
-                        // console.log('重新加载')
                         let arr = []
-                        this.goodsListArr = arr.concat(res.data.data.list)
+                        this.classify_selected.goodsListArr = arr.concat(res.data.data.list)
                         this.oldCid = this.cid
                     }
 
-                    this.goodsListArr = [...new Set(this.goodsListArr)] // 去重
+                    this.classify_selected.goodsListArr = [...new Set(this.classify_selected.goodsListArr)] // 去重
                     this.page += 1 //页码加1
-                    if (this.goodsListArr.length < 20) {
+                    if (this.classify_selected.goodsListArr.length < 20) {
                         this.touchend = true
                     }
 

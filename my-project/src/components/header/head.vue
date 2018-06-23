@@ -112,7 +112,7 @@
             ]),
 
         },
-        props: ['type', 'index', 'cid', 'goodsList'],
+        props: ['type', 'index'],
         directives: {
             TransferDom
         },
@@ -148,27 +148,27 @@
             },
             onSubmit() {
                 this.$refs.search.setBlur()
+                this.classify_selected.keyword = this.searchValue
 
                 let params = {
-                    // type: this.index,
                     type: this.index == 0 ? 'paoliang' : 'so',
-                    // page : 1,
-                    cid: this.cid,
-                    keyword: this.searchValue
+                    page : 1,
+                    cid: this.classify_selected.cid,
+                    keyword: this.classify_selected.keyword
                 }
 
-                console.log('on-submit', params)
 
-                this.$http.post(`/api/get_dtk_search_list`, params).then(res => {
-                    // console.log(res.data)
+                this.$http.post(`/api/get_tkjd_goods_list`, params).then(res => {
+                    console.log('on-submit', params, res.data)
+
                     if (res.data.code == 200) {
                         if (res.data.data.list.length != 0) {
-                            this.goodsList[this.index] = res.data.data.list
+                            this.classify_selected.goodsListArr = res.data.data.list
                             this.isSearching.state = true
                             this.hackReset.state = false
                             this.hackReset.state = true
                         }
-                        console.log('搜索结果长度:', this.goodsList[this.index].length)
+                        console.log('搜索结果长度:', this.classify_selected.goodsListArr[this.index].length)
                     } else {
                         this.showPosition('middle', res.data.data, 'warn')
                     }
@@ -181,7 +181,8 @@
             onCancel() {
                 // console.log('on cancel')
                 this.isSearching.state = false
-                this.goodsList[this.index] = []
+                this.classify_selected.goodsListArr = []
+                this.classify_selected.keyword = ''
                 this.hackReset.state = false
                 this.hackReset.state = true
             },
@@ -189,6 +190,7 @@
                 this.showPop = !this.showPop
                 this.classify_selected.cid = this.classifyList[this.classify].cid
                 this.classify_selected.name = this.classifyList[this.classify].name
+                // console.log(this.classify_selected)
             },
             showPosition(position, text, type) {
                 this.position = position
