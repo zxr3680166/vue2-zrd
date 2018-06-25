@@ -1,11 +1,11 @@
 <template>
     <div :id="'goodslist_' + index" class="goodslist_container loadmore" v-load-more="loaderMore">
-        <ul v-if="classify_selected.goodsListArr.length" type="1">
-            <li v-for="(item,index) in classify_selected.goodsListArr" class="goods_li" :key="item.GoodsID">
+        <ul v-if="goodsListArr.length > 0" type="1">
+            <li v-for="(item,index) in goodsListArr" class="goods_li" :key="item.goods_id">
                 <section class="imgWrapper">
                     <x-icon type="bookmark" class="bookmark" size="35" text="111"></x-icon>
                     <div class="bookmark_num">{{index+1}}</div>
-                    <img :src="item.Pic.indexOf('item_pic') ? item.Pic + '_430x430q90.jpg' : item.Pic + '_400x400.jpg_.webp'"
+                    <img :src="item.pic.indexOf('item_pic') ? item.pic + '_430x430q90.jpg' : item.pic + '_400x400.jpg_.webp'"
                          class="goods_img">
                 </section>
                 <group class="goods_right" :gutter="0">
@@ -13,31 +13,31 @@
                         <flexbox orient="vertical">
                             <!-- <flexbox-item>
                                 <h3 v-show="item.showVolume" class="goods_title_home">
-                                    最近2小时销售{{item.Sales_num}}件</h3>
+                                    最近2小时销售{{item.sales}}件</h3>
                             </flexbox-item> -->
                             <flexbox-item>
-                                <h4 :class="item.IsTmall? 'premium': ''" class="goods_title">
-                                    {{item.D_title}}</h4>
+                                <h4 :class="item.src? 'premium': ''" class="goods_title">
+                                    {{item.goods_name}}</h4>
                             </flexbox-item>
                         </flexbox>
                     </header>
                     <flexbox class="info_detail">
                         <flexbox-item :span="1/5">
-                            <div class="goods_info">¥{{item.Price}}</div>
+                            <div class="goods_info">¥{{item.price}}</div>
                         </flexbox-item>
                         <flexbox-item :span="1/3">
-                            <div class="goods_info">佣金：{{item.Commission_jihua}}%</div>
+                            <div class="goods_info">佣金：{{item.rate}}%</div>
                         </flexbox-item>
                         <flexbox-item>
-                            <div class="goods_info">销量：{{item.Sales_num}}</div>
+                            <div class="goods_info">销量：{{item.sales}}</div>
                         </flexbox-item>
                     </flexbox>
                     <flexbox class="info_detail" :gutter="0">
                         <flexbox-item :span="1.2/6">
-                            <div class="goods_info">券{{item.Quan_price}}元</div>
+                            <div class="goods_info">券{{item.price_coupons}}元</div>
                         </flexbox-item>
                         <flexbox-item :span="1.2/3">
-                            <x-button v-if="item.is_friendpop" mini type="warn" class="mini_button">
+                            <x-button v-if="item.is_friendpop" mini type="warn" class="mini_button" @click.native="openFriend_2(item)">
                                 朋友圈文案
                             </x-button>
                             <x-button v-else mini type="" class="mini_button dis" @click.native="openFriend(item)">
@@ -45,7 +45,7 @@
                             </x-button>
                         </flexbox-item>
                         <flexbox-item>
-                            <div class="goods_info">剩余：{{item.Quan_surplus}}</div>
+                            <div class="goods_info">剩余：{{item.quan_shengyu}}</div>
                         </flexbox-item>
                     </flexbox>
                     <flexbox class="info_detail">
@@ -110,6 +110,7 @@
                 <a class="integral">[积分用途]</a>
             </alert>
         </div>
+
         <div v-transfer-dom>
             <toast v-model="showPositionValue" :time="800" is-show-mask :type="toastType" :text="toastText"
                    :position="position" width="16em">{{toastText}}
@@ -133,6 +134,9 @@
 
             </popup>
         </div>
+
+        <goods-detail :popInfoDetail="popInfoDetail"></goods-detail>
+
     </div>
 </template>
 
@@ -150,15 +154,17 @@
         XButton,
         XTextarea
     } from 'vux'
-    import {loadMore} from '../../assets/js/mixin'
+    import { loadMore } from '../../assets/js/mixin'
     import uploader from './Uploader'
-    import {mapState} from 'vuex'
+    import { mapState } from 'vuex'
     import Clipboard from 'clipboard'
+    import goodsDetail from '../../components/common/goodsDetail'
 
     export default {
-        data() {
+        data () {
             return {
                 offset: 0, // 批次加载商品列表，每次加载20个 limit = 20
+                goodsListArr: [],// 商品列表数据
                 preventRepeatReuqest: false, //到达底部加载数据，防止重复加载
                 showBackStatus: false, //显示返回顶部按钮
                 showLoading: false, //显示加载动画
@@ -173,6 +179,9 @@
                     content: '', // 朋友圈内容
                     image: [], // 朋友圈图片，多图以‘#’号分隔
                     market_image: [], //营销主图
+                },
+                popInfoDetail : {
+                    content : '',
                 },
                 thumbnails: [], // 上传图片组
                 page: 1,
@@ -197,6 +206,7 @@
             TransferDom
         },
         components: {
+            goodsDetail,
             Toast,
             Alert,
             uploader,
@@ -210,49 +220,85 @@
             FlexboxItem,
         },
         mixins: [loadMore],
-        props: ['index','cid',],
+        props: ['index', 'type', 'cid',],
         watch: {
             //cid，当值发生变化的时候重新监听
             cid: function (value) {
                 // console.log('载入分类数据', this.oldCid, this.cid)
-                if (this.oldCid != this.cid) {
-                    this.page = 1
-                    this.touchend = false
+
+                if (this.type == 'classify') {
+
+                    if (this.oldCid != this.cid) {
+                        this.page = 1
+                        this.touchend = false
+                    }
+
+                    if (this.cid != 0) {
+                        this.loaderMore()
+                    } else {
+                        this.goodsListArr = this.classify_selected.goodsListArr
+                    }
                 }
-                this.loaderMore()
             },
         },
-        updated() {
+        updated () {
         },
         methods: {
-            async initData() {
+            async initData () {
                 //获取数据
                 this.getList(this.page)
             },
-            getList(page) {
+            getList (page) {
 
-                let params = {
-                    type: this.classify_selected.name, //商品自增长id
-                    cid: this.classify_selected.cid, //商品淘宝id
-                    page: page, //商品标题
-                    keyword: this.classify_selected.keyword, // 朋友圈内容
+                console.log(this.type, this.type == 'classify')
+                let params = {}
+
+                if (this.type == 'classify') {
+                    params = {
+                        type: this.type, //商品自增长id
+                        cid: this.classify_selected.cid, //商品淘宝id
+                        page: page, //商品标题
+                    }
+                } else {
+                    params = {
+                        type: this.type, //商品自增长id
+                        page: page, //商品标题
+                    }
                 }
+                console.log(params)
 
                 this.$http.post(`/api/get_tkjd_goods_list`, params).then(res => {
-                    console.log('分类和搜索参数',params,res.data)
+                    console.log(params, res.data)
 
-                    if (this.oldCid === this.cid) {
-                        this.classify_selected.goodsListArr = this.classify_selected.goodsListArr.concat(res.data.data.list)
+                    if (this.type == 'classify') {
+
+                        if (this.oldCid === this.cid) {
+                            this.classify_selected.goodsListArr = this.classify_selected.goodsListArr.concat(res.data.data.list)
+                        } else {
+                            let arr = []
+                            this.classify_selected.goodsListArr = arr.concat(res.data.data.list)
+                            this.oldCid = this.cid
+                        }
+
+                        this.classify_selected.goodsListArr = [...new Set(this.classify_selected.goodsListArr)] // 去重
+
+                        this.goodsListArr = this.classify_selected.goodsListArr
+
+                        this.page += 1 //页码加1
+                        if (this.classify_selected.goodsListArr.length < 20) {
+                            this.touchend = true
+                        }
+
                     } else {
-                        let arr = []
-                        this.classify_selected.goodsListArr = arr.concat(res.data.data.list)
-                        this.oldCid = this.cid
-                    }
 
-                    this.classify_selected.goodsListArr = [...new Set(this.classify_selected.goodsListArr)] // 去重
-                    this.page += 1 //页码加1
-                    if (this.classify_selected.goodsListArr.length < 20) {
-                        this.touchend = true
+                        this.goodsListArr = this.goodsListArr.concat(res.data.data.list)
+
+                        this.goodsListArr = [...new Set(this.goodsListArr)] // 去重
+                        this.page += 1 //页码加1
+                        if (this.goodsListArr.length < 20) {
+                            this.touchend = true
+                        }
+
                     }
 
                     this.hideLoading()
@@ -260,7 +306,7 @@
                 })
             },
             //到达底部加载更多数据
-            async loaderMore() {
+            async loaderMore () {
                 if (this.touchend || this.isSearching.state) {
                     return
                 }
@@ -275,23 +321,23 @@
 
             },
             //复制掏口令
-            copyTaoPwd(item) {
+            copyTaoPwd (item) {
                 // console.log(!!item.tao_pwd)
                 if (!!item.tao_pwd) {
-                    this.copyText = item.D_title
-                        + '\n原价' + item.Org_Price + '  券后' + item.Quan_price + '\n'
+                    this.copyText = item.goods_name
+                        + '\n原价' + item.Org_price + '  券后' + item.price_coupons + '\n'
                         + '--------抢购方式--------\n'
                         + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
                     this.pwdPop = true
                     // this.copy()
                     // location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`
                 } else {
-                    this.$http.get(`/api/get_taobao_tbk_tpwd?id=${item.keyid}`).then(res => {
+                    this.$http.get(`/api/get_taobao_tbk_tpwd?id=${item.goods_id}`).then(res => {
                         // console.log(res.data)
                         if (res.data.code == 200) {
                             item.tao_pwd = res.data.data.tao_pwd
-                            this.copyText = item.D_title
-                                + '\n原价' + item.Org_Price + '  券后' + item.Quan_price + '\n'
+                            this.copyText = item.goods_name
+                                + '\n原价' + item.Org_price + '  券后' + item.price_coupons + '\n'
                                 + '-----抢购方式--------\n'
                                 + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
                             this.pwdPop = true
@@ -306,27 +352,34 @@
             },
 
             //开发环境与编译环境loading隐藏方式不同
-            hideLoading() {
+            hideLoading () {
                 this.showLoading = false
             },
-            openFriend(item) {
+            openFriend (item) {
                 // console.log(item)
                 this.friendPop = !this.friendPop
-                this.link = 'https://detail.tmall.com/item.htm?id=' + item.GoodsID
-                this.popInfo.keyid = item.ID //商品自增长id
-                this.popInfo.goods_id = item.GoodsID //商品淘宝id
-                this.popInfo.goods_title = item.Title
-                this.popInfo.content = item.Introduce
+                this.link = 'https://detail.tmall.com/item.htm?id=' + item.goods_id
+                this.popInfo.keyid = item.id //商品自增长id
+                this.popInfo.goods_id = item.goods_id //商品淘宝id
+                this.popInfo.goods_title = item.cate_name
+                this.popInfo.content = item.quan_guid_content
                 this.popInfo.image = []// 朋友圈图片，多图以‘#’号分隔
                 this.popInfo.market_image = []// 主图
             },
-            onShow() {
+            openFriend_2 (item) {
+                // console.log(item)
+                this.$http.get(`api/get_friendpop_detail?goods_id=${item.GoodsID}`).then(res => {
+                    console.log(res.data)
+                    this.popInfoDetail = res.data.data.entity
+                })
+            },
+            onShow () {
                 console.log('on show')
             },
-            onHide() {
+            onHide () {
                 console.log('on hide')
             },
-            onSubmit() {
+            onSubmit () {
                 if (this.popInfo.market_image.length < 1 || this.popInfo.image.length < 3) {
                     this.showPosition('middle', '请上传1张主图和至少3张晒图', 'warn')
                     return
@@ -355,13 +408,13 @@
                     }
                 })
             },
-            showPosition(position, text, type) {
+            showPosition (position, text, type) {
                 this.position = position
                 this.toastText = text
                 this.toastType = type
                 this.showPositionValue = true
             },
-            copy() {
+            copy () {
                 const clipboard = new Clipboard('.copy-TaoPwd')
                 clipboard.on('success', e => {
                     // console.log('复制成功')
@@ -381,7 +434,7 @@
             },
 
         },
-        mounted() {
+        mounted () {
             this.$nextTick(() => {
                 this.initData()
             })
@@ -389,7 +442,7 @@
             //     // console.log(this.$vux.toast.isVisible())
             // }, 1000)
         },
-        beforeDestroy() {
+        beforeDestroy () {
             // clearInterval(this.timer)
         }
 

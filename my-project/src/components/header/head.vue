@@ -48,12 +48,12 @@
     </div>
 </template>
 <script>
-    import {Group, Checker, CheckerItem, TransferDom, PopupHeader, Popup, XHeader, Search, Toast} from 'vux'
-    import {mapState} from 'vuex'
+    import { Checker, CheckerItem, Group, Popup, PopupHeader, Search, Toast, TransferDom, XHeader } from 'vux'
+    import { mapState } from 'vuex'
 
     export default {
         name: 'head-nav',
-        data() {
+        data () {
             return {
                 showPop: false, // 分类导航弹出
                 classify: '', // 分类选择
@@ -127,18 +127,18 @@
             Search,
         },
         methods: {
-            setFocus() {
+            setFocus () {
                 this.$refs.search.setFocus()
             },
-            resultClick(item) {
+            resultClick (item) {
                 // window.alert('you click the result item: ' + JSON.stringify(item))
                 this.onSubmit()
             },
-            getResult(val) {
+            getResult (val) {
                 // console.log('on-change', val)
                 this.results = val ? this._getResult(this.searchValue) : []
             },
-            _getResult(val) {
+            _getResult (val) {
                 let rs = []
                 rs.push({
                     title: `关键词：${val}<------点击搜索`,
@@ -146,39 +146,39 @@
                 })
                 return rs
             },
-            onSubmit() {
+            onSubmit () {
                 this.$refs.search.setBlur()
                 this.classify_selected.keyword = this.searchValue
 
                 let params = {
-                    type: this.index == 0 ? 'paoliang' : 'so',
-                    page : 1,
+                    type: 'so',
+                    page: 1,
                     cid: this.classify_selected.cid,
                     keyword: this.classify_selected.keyword
                 }
-
 
                 this.$http.post(`/api/get_tkjd_goods_list`, params).then(res => {
                     console.log('on-submit', params, res.data)
 
                     if (res.data.code == 200) {
-                        if (res.data.data.list.length != 0) {
-                            this.classify_selected.goodsListArr = res.data.data.list
-                            this.isSearching.state = true
-                            this.hackReset.state = false
-                            this.hackReset.state = true
-                        }
-                        console.log('搜索结果长度:', this.classify_selected.goodsListArr[this.index].length)
+                        this.classify_selected.goodsListArr = res.data.data.list
+                        this.classify_selected.cid = 0
+                        this.classify_selected.name = this.classify_selected.keyword
+                        this.isSearching.state = true
+                        this.hackReset.state = false
+                        this.hackReset.state = true
+
+                        console.log('搜索结果长度:', this.classify_selected.goodsListArr.length)
                     } else {
                         this.showPosition('middle', res.data.data, 'warn')
                     }
                 })
 
             },
-            onFocus() {
+            onFocus () {
                 // console.log('on focus')
             },
-            onCancel() {
+            onCancel () {
                 // console.log('on cancel')
                 this.isSearching.state = false
                 this.classify_selected.goodsListArr = []
@@ -186,19 +186,18 @@
                 this.hackReset.state = false
                 this.hackReset.state = true
             },
-            onChange() {
+            onChange () {
                 this.showPop = !this.showPop
                 this.classify_selected.cid = this.classifyList[this.classify].cid
                 this.classify_selected.name = this.classifyList[this.classify].name
                 // console.log(this.classify_selected)
             },
-            showPosition(position, text, type) {
+            showPosition (position, text, type) {
                 this.position = position
                 this.toastText = text
                 this.toastType = type
                 this.showPositionValue = true
             },
-
 
         }
     }

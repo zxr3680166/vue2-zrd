@@ -1,6 +1,6 @@
 <template>
     <div :id="'goodslist_' + type" class="goodslist_container loadmore" v-load-more="loaderMore">
-        <ul v-if="goodsListArr.length" type="1">
+        <ul v-if="goodsListArr.length > 0" type="1">
             <li v-for="(item,index) in goodsListArr" class="goods_li" :key="item.ID">
                 <section class="imgWrapper">
                     <x-icon type="bookmark" class="bookmark" size="35" text="111"></x-icon>
@@ -37,7 +37,7 @@
                             <div class="goods_info">券{{item.Quan_price}}元</div>
                         </flexbox-item>
                         <flexbox-item :span="1.2/3">
-                            <x-button v-if="item.is_friendpop" mini type="warn" class="mini_button">
+                            <x-button v-if="item.is_friendpop" mini type="warn" class="mini_button" @click.native="openFriend_2(item)">
                                 朋友圈文案
                             </x-button>
                             <x-button v-else mini type="" class="mini_button dis" @click.native="openFriend(item)">
@@ -133,6 +133,8 @@
 
             </popup>
         </div>
+
+        <goods-detail :popInfoDetail="popInfoDetail" :currentItem="currentItem" @openFriend="openFriend"></goods-detail>
     </div>
 </template>
 
@@ -150,13 +152,14 @@
         XButton,
         XTextarea
     } from 'vux'
-    import {loadMore} from '../../assets/js/mixin'
+    import { loadMore } from '../../assets/js/mixin'
     import uploader from './Uploader'
-    import {mapState} from 'vuex'
+    import { mapState } from 'vuex'
     import Clipboard from 'clipboard'
+    import goodsDetail from '../../components/common/goodsDetail'
 
     export default {
-        data() {
+        data () {
             return {
                 offset: 0, // 批次加载商品列表，每次加载20个 limit = 20
                 goodsListArr: [],// 商品列表数据
@@ -175,6 +178,10 @@
                     image: [], // 朋友圈图片，多图以‘#’号分隔
                     market_image: [], //营销主图
                 },
+                popInfoDetail : {
+                    content : '',
+                },
+                currentItem: null,
                 thumbnails: [], // 上传图片组
                 page: 1,
                 oldCid: 0,
@@ -184,6 +191,7 @@
                 showPositionValue: false,
                 copyText: '',
                 pwdPop: false,
+                api: '',
             }
         },
         computed: {
@@ -196,6 +204,7 @@
             TransferDom
         },
         components: {
+            goodsDetail,
             Toast,
             Alert,
             uploader,
@@ -209,7 +218,7 @@
             FlexboxItem,
         },
         mixins: [loadMore],
-        props: ['index','type', 'cid', 'goodsList'],
+        props: ['index', 'type'],
         watch: {
             //cid，当值发生变化的时候重新监听
             cid: function (value) {
@@ -220,51 +229,36 @@
                 }
                 // this.loaderMore()
             },
-            goodsList: function (value) {
-                if (this.goodsList.length != 0) {
-                    console.log('替换搜索列表', this.type)
-                    this.goodsListArr = this.goodsList
-                } else {
-                    //获取数据
-                    this.page = 1
-                    this.goodsListArr = []
-                    this.getList(this.page)
-                }
-            },
         },
-        updated() {
+        updated () {
         },
         methods: {
-            async initData() {
+            async initData () {
                 //获取数据
                 this.getList(this.page)
             },
-            getList(page) {
+            getList (page) {
 
-                this.$http.get(`api/get_dtk_goods_list?type=${this.type}&page=${page}&cid=${this.cid}`).then(res => {
+                if (this.type == 'paoliang') {
+                    this.api = 'get_dtk_goods_list'
+                    this.$http.get(`api/${this.api}?type=${this.type}&page=${page}`).then(res => {
+                        console.log(this.api,res.data)
 
-                    if (this.oldCid === this.cid) {
-                        // console.log('加载更多')
                         this.goodsListArr = this.goodsListArr.concat(res.data.data.list)
-                    } else {
-                        // console.log('重新加载')
-                        let arr = []
-                        this.goodsListArr = arr.concat(res.data.data.list)
-                        this.oldCid = this.cid
-                    }
 
-                    this.goodsListArr = [...new Set(this.goodsListArr)] // 去重
-                    this.page += 1 //页码加1
-                    if (this.goodsListArr.length < 20) {
-                        this.touchend = true
-                    }
+                        this.goodsListArr = [...new Set(this.goodsListArr)] // 去重
+                        this.page += 1 //页码加1
+                        if (this.goodsListArr.length < 20) {
+                            this.touchend = true
+                        }
 
-                    this.hideLoading()
-                    this.preventRepeatReuqest = false
-                })
+                        this.hideLoading()
+                        this.preventRepeatReuqest = false
+                    })
+                }
             },
             //到达底部加载更多数据
-            async loaderMore() {
+            async loaderMore () {
                 if (this.touchend || this.isSearching.state) {
                     return
                 }
@@ -279,7 +273,7 @@
 
             },
             //复制掏口令
-            copyTaoPwd(item) {
+            copyTaoPwd (item) {
                 // console.log(!!item.tao_pwd)
                 if (!!item.tao_pwd) {
                     this.copyText = item.D_title
@@ -310,10 +304,10 @@
             },
 
             //开发环境与编译环境loading隐藏方式不同
-            hideLoading() {
+            hideLoading () {
                 this.showLoading = false
             },
-            openFriend(item) {
+            openFriend (item) {
                 // console.log(item)
                 this.friendPop = !this.friendPop
                 this.link = 'https://detail.tmall.com/item.htm?id=' + item.GoodsID
@@ -324,13 +318,20 @@
                 this.popInfo.image = []// 朋友圈图片，多图以‘#’号分隔
                 this.popInfo.market_image = []// 主图
             },
-            onShow() {
+            openFriend_2 (item) {
+                this.currentItem = item
+                this.$http.get(`api/get_friendpop_detail?goods_id=${item.GoodsID}`).then(res => {
+                    // console.log(res.data)
+                    this.popInfoDetail = res.data.data.entity
+                })
+            },
+            onShow () {
                 console.log('on show')
             },
-            onHide() {
+            onHide () {
                 console.log('on hide')
             },
-            onSubmit() {
+            onSubmit () {
                 if (this.popInfo.market_image.length < 1 || this.popInfo.image.length < 3) {
                     this.showPosition('middle', '请上传1张主图和至少3张晒图', 'warn')
                     return
@@ -359,13 +360,13 @@
                     }
                 })
             },
-            showPosition(position, text, type) {
+            showPosition (position, text, type) {
                 this.position = position
                 this.toastText = text
                 this.toastType = type
                 this.showPositionValue = true
             },
-            copy() {
+            copy () {
                 const clipboard = new Clipboard('.copy-TaoPwd')
                 clipboard.on('success', e => {
                     // console.log('复制成功')
@@ -385,7 +386,7 @@
             },
 
         },
-        mounted() {
+        mounted () {
             this.$nextTick(() => {
                 this.initData()
             })
@@ -393,7 +394,7 @@
             //     // console.log(this.$vux.toast.isVisible())
             // }, 1000)
         },
-        beforeDestroy() {
+        beforeDestroy () {
             // clearInterval(this.timer)
         }
     }

@@ -9,7 +9,8 @@
                                  v-if="userInfo&&userInfo.id">
                             <span class="privateImage" v-else>
                                 <svg class="privateImage-svg">
-                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#headimgurl-default"></use>
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                         xlink:href="#headimgurl-default"></use>
                                 </svg>
                             </span>
                         </flexbox-item>
@@ -172,7 +173,8 @@
                 <flexbox orient="vertical" class="">
                     <flexbox-item>
                         <div class="">
-                            <x-switch :title="setArray.tkl.title[setArray.tkl.value]" :value-map="setArray.tkl.valueMap" v-model="setArray.tkl.value" @on-change="onChange_tkl"></x-switch>
+                            <x-switch :title="setArray.tkl.title[setArray.tkl.value]" :value-map="setArray.tkl.valueMap"
+                                      v-model="setArray.tkl.value" @on-change="onChange_tkl"></x-switch>
                         </div>
                     </flexbox-item>
 
@@ -192,20 +194,20 @@
 <script>
     import { mapState } from 'vuex'
     import {
-        Toast,
-        XSwitch,
         Alert,
-        Datetime,
         Checklist,
-        XInput,
-        XTextarea,
-        TransferDom,
-        PopupHeader,
-        Popup,
-        XButton,
+        Datetime,
         Flexbox,
         FlexboxItem,
         Group,
+        Popup,
+        PopupHeader,
+        Toast,
+        TransferDom,
+        XButton,
+        XInput,
+        XSwitch,
+        XTextarea,
     } from 'vux'
     import uploader from '../../components/common/Uploader_2'
 
@@ -269,14 +271,14 @@
                     show: false,
                     title: '设置PID',
                 },
-                popUp_set : {
+                popUp_set: {
                     show: false,
                     title: '设置中心',
                 },
-                setArray : {
-                    tkl : {
-                        title: ['淘口令链接版','淘口令口令版'],
-                        value : 0,
+                setArray: {
+                    tkl: {
+                        title: ['淘口令口令版', '淘口令链接版'],
+                        value: 0,
                         valueMap: [0, 1]
                     }
                 },
@@ -341,12 +343,13 @@
 
             },
             onSubmit_pid () {
-                this.$http.post(`/api/update_pid`,{pid:this.pid}).then(res => {
-                    if(res.data.code == 200){
-                        this.userInfo.pid = this.pid;
-                        this.popUp_pid.show = false;
+                this.$http.post(`/api/update_pid`, {pid: this.pid}).then(res => {
+                    if (res.data.code == 200) {
+                        this.showPosition('middle', 'PID设置成功', 'success')
+                        this.userInfo.pid = this.pid
+                        this.popUp_pid.show = false
                     }
-                });
+                })
             },
             change (val, label) {
                 console.log('change', val, label)
@@ -362,15 +365,21 @@
                 this.popUp.show = !this.popUp.show
                 this.popUp.title = item
             },
-            showPosition(position, text, type) {
+            showPosition (position, text, type) {
                 this.position = position
                 this.toastText = text
                 this.toastType = type
                 this.showPositionValue = true
             },
             onChange_tkl (Val) {
-                // console.log('淘口令设置',Val)
-                this.showPosition('middle', '淘口令设置成功', 'success')
+                // console.log('淘口令设置', Val + 1)
+                this.$http.post(`/api/update_tkl_type`, {tkl_type: Val + 1}).then(res => {
+                    if (res.data.code == 200) {
+                        this.showPosition('middle', '淘口令设置成功', 'success')
+                        this.userInfo.pid = this.pid
+                        this.popUp_pid.show = false
+                    }
+                })
             },
         },
         watch: {

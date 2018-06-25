@@ -9,26 +9,23 @@
              active-color="#fff" bar-active-color="#fff" v-model="index">
             <tab-item v-for="(item, idx) in tabList"
                       :selected="idx === index"
-                      :key="idx">{{ item }}
-            </tab-item>
-            <tab-item :selected="tabList.length + 1 === index"
-                      :key="tabList.length + 1">{{ classify_selected.name }}
+                      :key="idx">
+                <div v-if="item != ''">{{ item }}</div>
+                <div v-else>{{ classify_selected.name  }}</div>
             </tab-item>
         </tab>
 
         <!-- 正文 -->
         <swiper class="tabContainer" v-model="index" height="100%" :show-dots="false">
             <swiper-item class="swiperItem" v-for="(item, index) in tabList" :key="index">
-                <div class="tab-swiper vux-center">
+                <div v-if="index == 0" class="tab-swiper vux-center">
                     <!-- 商品列表 -->
-                    <goods-list v-if="hackReset.state" :index="index" :cid="classify_selected.cid"
-                                :goodsList="goodsList[index]" :type="types[index]"></goods-list>
+                    <goods-list v-if="hackReset.state" :index="index" :type="types[index]"></goods-list>
                 </div>
-            </swiper-item>
-            <swiper-item class="swiperItem" :key="tabList.length + 1">
-                <div class="tab-swiper vux-center">
+                <div v-else class="tab-swiper vux-center">
                     <!-- 商品列表 -->
-                    <goods-list_2 v-if="hackReset.state" :index="tabList.length + 1" :cid="classify_selected.cid"></goods-list_2>
+                    <goods-list_2 v-if="hackReset.state" :index="index" :type="types[index]"
+                                  :cid="classify_selected.cid"></goods-list_2>
                 </div>
             </swiper-item>
         </swiper>
@@ -45,18 +42,17 @@
     import goodsList from '../../components/common/goodsList'
     import goodsList_2 from '../../components/common/goodsList_2'
     import backToTop from '../../components/common/backToTop'
-    import {Tab, TabItem, Swiper, SwiperItem} from 'vux'
-    import {mapState} from 'vuex'
+    import { Swiper, SwiperItem, Tab, TabItem } from 'vux'
+    import { mapState } from 'vuex'
 
     export default {
         name: 'home',
-        data() {
+        data () {
             return {
-                tabList: ['实时排行', '聚划算', '淘抢购', '大牌推荐', '全部商品'],
-                types: ['paoliang', 'www_lingquan', 'tqg', 'jhs', 'dapai'],
-                goodsList: [[], [], [], [], []],// 商品列表数据
+                tabList: ['实时排行', '聚划算', '淘抢购', '大牌推荐', '全部商品', ''],
+                types: ['paoliang', 'www_lingquan', 'tqg', 'jhs', 'dapai', 'classify'],
+                // goodsList: [[], [], [], [], []],// 商品列表数据
                 index: 0,
-
             }
         },
         computed: {
@@ -75,7 +71,7 @@
             Swiper,
             SwiperItem
         },
-        mounted() {
+        mounted () {
             this.$nextTick(() => {
                 this.hackReset.state = true
             })
