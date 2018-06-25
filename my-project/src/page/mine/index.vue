@@ -159,12 +159,41 @@
                 </flexbox>
             </popup>
         </div>
+
+        <div v-transfer-dom>
+            <popup v-model="popUp_set.show" class="popUp_form" height="120px">
+                <popup-header
+                        class="popUp_form_header"
+                        :title="popUp_set.title"
+                        left-text="返回"
+                        @on-click-left="popUp_set.show = false"
+                        :show-bottom-border="false">
+                </popup-header>
+                <flexbox orient="vertical" class="">
+                    <flexbox-item>
+                        <div class="">
+                            <x-switch :title="setArray.tkl.title[setArray.tkl.value]" :value-map="setArray.tkl.valueMap" v-model="setArray.tkl.value" @on-change="onChange_tkl"></x-switch>
+                        </div>
+                    </flexbox-item>
+
+                </flexbox>
+            </popup>
+        </div>
+
+
+        <div v-transfer-dom>
+            <toast v-model="showPositionValue" :time="800" is-show-mask :type="toastType" :text="toastText"
+                   :position="position" width="10em">{{toastText}}
+            </toast>
+        </div>
     </div>
 </template>
 
 <script>
     import { mapState } from 'vuex'
     import {
+        Toast,
+        XSwitch,
         Alert,
         Datetime,
         Checklist,
@@ -223,6 +252,10 @@
                         info: '',
                     },
                 ],
+                position: 'default',
+                toastText: '',
+                toastType: 'success',
+                showPositionValue: false,
                 popUp: {
                     show: false,
                     title: '提交商品',
@@ -235,8 +268,18 @@
                 popUp_pid: {
                     show: false,
                     title: '设置PID',
-
-                }
+                },
+                popUp_set : {
+                    show: false,
+                    title: '设置中心',
+                },
+                setArray : {
+                    tkl : {
+                        title: ['淘口令链接版','淘口令口令版'],
+                        value : 0,
+                        valueMap: [0, 1]
+                    }
+                },
 
             }
         },
@@ -244,6 +287,8 @@
             this.initData()
         },
         components: {
+            Toast,
+            XSwitch,
             Alert,
             Datetime,
             Checklist,
@@ -288,6 +333,8 @@
                     this.openPopUp(item.name)
                 } else if (item.index == 3) {
                     this.popUp_pid.show = true
+                } else if (item.index == 7) {
+                    this.popUp_set.show = true
                 }
             },
             onSubmit () {
@@ -314,7 +361,17 @@
             openPopUp (item) {
                 this.popUp.show = !this.popUp.show
                 this.popUp.title = item
-            }
+            },
+            showPosition(position, text, type) {
+                this.position = position
+                this.toastText = text
+                this.toastType = type
+                this.showPositionValue = true
+            },
+            onChange_tkl (Val) {
+                // console.log('淘口令设置',Val)
+                this.showPosition('middle', '淘口令设置成功', 'success')
+            },
         },
         watch: {
             userInfo: function (value) {
@@ -527,6 +584,5 @@
         }
 
     }
-
 
 </style>

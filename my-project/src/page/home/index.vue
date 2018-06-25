@@ -2,7 +2,7 @@
 
     <div class="home">
         <!-- 搜索栏 -->
-        <head-nav :type="types[index]" :index="index" :cid="classify_selected.cid" :goodsList="goodsList"></head-nav>
+        <head-nav :type="types[index]" :index="index"></head-nav>
 
         <!-- 顶部导航 -->
         <tab class="homeTab" :line-width="3" custom-bar-width="60px"
@@ -10,6 +10,9 @@
             <tab-item v-for="(item, idx) in tabList"
                       :selected="idx === index"
                       :key="idx">{{ item }}
+            </tab-item>
+            <tab-item :selected="tabList.length + 1 === index"
+                      :key="tabList.length + 1">{{ classify_selected.name }}
             </tab-item>
         </tab>
 
@@ -20,6 +23,12 @@
                     <!-- 商品列表 -->
                     <goods-list v-if="hackReset.state" :index="index" :cid="classify_selected.cid"
                                 :goodsList="goodsList[index]" :type="types[index]"></goods-list>
+                </div>
+            </swiper-item>
+            <swiper-item class="swiperItem" :key="tabList.length + 1">
+                <div class="tab-swiper vux-center">
+                    <!-- 商品列表 -->
+                    <goods-list_2 v-if="hackReset.state" :index="tabList.length + 1" :cid="classify_selected.cid"></goods-list_2>
                 </div>
             </swiper-item>
         </swiper>
@@ -34,6 +43,7 @@
 <script>
     import headNav from '../../components/header/head'
     import goodsList from '../../components/common/goodsList'
+    import goodsList_2 from '../../components/common/goodsList_2'
     import backToTop from '../../components/common/backToTop'
     import {Tab, TabItem, Swiper, SwiperItem} from 'vux'
     import {mapState} from 'vuex'
@@ -46,6 +56,7 @@
                 types: ['paoliang', 'www_lingquan', 'tqg', 'jhs', 'dapai'],
                 goodsList: [[], [], [], [], []],// 商品列表数据
                 index: 0,
+
             }
         },
         computed: {
@@ -57,6 +68,7 @@
         components: {
             backToTop,
             goodsList,
+            goodsList_2,
             headNav,
             Tab,
             TabItem,
