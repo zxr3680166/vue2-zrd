@@ -292,7 +292,7 @@
                     // this.copy()
                     // location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`
                 } else {
-                    this.$http.get(`/api/get_taobao_tbk_tpwd?id=${item.keyid}`).then(res => {
+                    this.$http.get(`/api/get_taobao_tbk_tpwd?id=${item.GoodsID}`).then(res => {
                         // console.log(res.data)
                         if (res.data.code == 200) {
                             item.tao_pwd = res.data.data.tao_pwd
