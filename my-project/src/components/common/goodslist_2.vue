@@ -353,7 +353,7 @@
                                     + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
                                     + '--------抢购方式--------\n'
                                     + '打开连接\n' +
-                                    'https://wenan001.kuaizhan.com/?taowords=' + item.tao_pwd + '&pic=' + Base64.encode(item.Pic) + '\n'
+                                    'https://wenan001.kuaizhan.com/?taowords=' + item.tao_pwd + '&pic=' + Base64.encode(item.pic) + '\n'
                             } else {
                                 this.copyText = item.D_title
                                     + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
