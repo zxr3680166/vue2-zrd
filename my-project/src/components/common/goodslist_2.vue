@@ -86,7 +86,7 @@
                 </popup-header>
                 <div class="link">{{link}}</div>
                 <div class="title">{{popInfo.goods_title}}</div>
-                <x-textarea class="textarea_input" title="" :max="200" placeholder="请填写完善朋友圈文案" :show-counter="false"
+                <x-textarea class="textarea_input" title="" :max="300" placeholder="请填写完善朋友圈文案" :show-counter="false"
                             :rows="8" :cols="30" v-model="popInfo.content">
                 </x-textarea>
                 <uploader :popInfo="popInfo"></uploader>

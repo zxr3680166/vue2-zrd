@@ -125,7 +125,7 @@
                         title="复制淘口令"
                         :show-bottom-border="false">
                 </popup-header>
-                <x-textarea class="textarea_input" title="" :max="200" placeholder="淘口令" :show-counter="false"
+                <x-textarea class="textarea_input" title="" :max="300" placeholder="淘口令" :show-counter="false"
                             :rows="8" :cols="30" v-model="copyText">
                 </x-textarea>
 
