@@ -250,7 +250,6 @@
             },
             getList (page) {
 
-                console.log(this.type, this.type == 'classify')
                 let params = {}
 
                 if (this.type == 'classify') {
@@ -265,10 +264,9 @@
                         page: page, //商品标题
                     }
                 }
-                console.log(params)
 
                 this.$http.post(`/api/get_tkjd_goods_list`, params).then(res => {
-                    console.log(params, res.data)
+                    // console.log(params, res.data)
 
                     if (this.type == 'classify') {
 
@@ -329,8 +327,6 @@
                         + '--------抢购方式--------\n'
                         + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
                     this.pwdPop = true
-                    // this.copy()
-                    // location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`
                 } else {
                     this.$http.get(`/api/get_taobao_tbk_tpwd?id=${item.goods_id}`).then(res => {
                         // console.log(res.data)
@@ -341,8 +337,6 @@
                                 + '-----抢购方式--------\n'
                                 + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
                             this.pwdPop = true
-                            // this.copy()
-                            // location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`
                         } else {
                             // alert(res.data.data)
                             this.showPosition('middle', res.data.data, 'warn')
@@ -370,7 +364,7 @@
             openFriend_2 (item) {
                 // console.log(item)
                 this.$http.get(`api/get_friendpop_detail?goods_id=${item.goods_id}`).then(res => {
-                    console.log(res.data)
+                    // console.log(res.data)
                     this.popInfoDetail = res.data.data.entity
                 })
             },
@@ -402,7 +396,7 @@
 
                 this.$http.post(`/api/add_friendpop`, this.popInfo).then(res => {
                     if (res.data.code == 200) {
-                        console.log(this.popInfo)
+                        // console.log(this.popInfo)
                         this.popInfo = params
                     } else {
                         this.showPosition('middle', '未知错误', 'warn')
