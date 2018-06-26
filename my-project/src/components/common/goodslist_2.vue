@@ -362,7 +362,7 @@
                 this.popInfo.keyid = item.id //商品自增长id
                 this.popInfo.type = 'tkdj' //文案属于淘客基地商品
                 this.popInfo.goods_id = item.goods_id //商品淘宝id
-                this.popInfo.goods_title = item.cate_name
+                this.popInfo.goods_title = item.goods_name
                 this.popInfo.content = item.quan_guid_content
                 this.popInfo.image = []// 朋友圈图片，多图以‘#’号分隔
                 this.popInfo.market_image = []// 主图
