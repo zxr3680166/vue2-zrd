@@ -3,14 +3,14 @@
         <div class="weui-uploader__bd">
             <ul class="weui-uploader__files">
                 <li class="weui-uploader__file uploadImage" v-for="(thumbnail, index) in popInfo.market_image"
-                    :style="{ backgroundImage: `url(${ thumbnail }')` }"
+                    :style="{ backgroundImage: `url(${ thumbnail })` }"
                     @click.native="click(index)" :key="thumbnail">
                     <badge text="x" class="delete" @click.native.stop="deleteImage(popInfo.market_image,index)"></badge>
                 </li>
             </ul>
             <ul class="weui-uploader__files">
                 <li class="weui-uploader__file uploadImage" v-for="(thumbnail, index) in popInfo.image"
-                    :style="{ backgroundImage: `url(${ thumbnail }')` }"
+                    :style="{ backgroundImage: `url(${ thumbnail })` }"
                     @click.native="click(index)" :key="thumbnail">
                     <badge text="x" class="delete" @click.native.stop="deleteImage(popInfo.image,index)"></badge>
                 </li>
@@ -91,7 +91,6 @@
                 var uri = ''
                 let form = new FormData()
                 form.append('file', img1, img1.name)
-                console.log(img1, img1.name, this.popInfo)
 
                 this.$http.post(`/api/uploadFile`, form, {
                     headers: {'Content-Type': 'multipart/form-data'}
