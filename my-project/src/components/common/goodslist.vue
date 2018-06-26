@@ -87,7 +87,7 @@
                 </popup-header>
                 <div class="link">{{link}}</div>
                 <div class="title">{{popInfo.goods_title}}</div>
-                <x-textarea class="textarea_input" title="" :max="200" placeholder="请填写完善朋友圈文案" :show-counter="false"
+                <x-textarea class="textarea_input" title="" :max="300" placeholder="请填写完善朋友圈文案" :show-counter="false"
                             :rows="8" :cols="30" v-model="popInfo.content">
                 </x-textarea>
                 <uploader :popInfo="popInfo"></uploader>
@@ -285,7 +285,7 @@
                             + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
                             + '--------抢购方式--------\n'
                             + '打开连接\n' +
-                            'https://wenan001.kuaizhan.com/?taowords=' + item.tao_pwd + '&pic=' + Base64.encode(item.Pic) + '\n'
+                            'https://wenan001.kuaizhan.com/?taowords=' + item.tao_pwd.replace(/￥/g,'') + '&pic=' + Base64.encode(item.Pic) + '\n'
                     } else {
                         this.copyText = item.D_title
                             + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
@@ -304,7 +304,7 @@
                                     + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
                                     + '--------抢购方式--------\n'
                                     + '打开连接\n' +
-                                    'https://wenan001.kuaizhan.com/?taowords=' + item.tao_pwd + '&pic=' + Base64.encode(item.Pic) + '\n'
+                                    'https://wenan001.kuaizhan.com/?taowords=' + item.tao_pwd.replace(/￥/g,'') + '&pic=' + Base64.encode(item.Pic) + '\n'
                             } else {
                                 this.copyText = item.D_title
                                     + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
