@@ -299,10 +299,6 @@
 
                     }
 
-                    // for (let i=0;i< this.goodsListArr.length;i++ ) {
-                    //     console.log('goods_id', this.goodsListArr[i].goods_id)
-                    // }
-
                     this.hideLoading()
                     this.preventRepeatReuqest = false
                 })
