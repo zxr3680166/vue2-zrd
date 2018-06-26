@@ -37,7 +37,8 @@
                             <div class="goods_info">券{{item.Quan_price}}元</div>
                         </flexbox-item>
                         <flexbox-item :span="1.2/3">
-                            <x-button v-if="item.is_friendpop" mini type="warn" class="mini_button" @click.native="openFriend_2(item)">
+                            <x-button v-if="item.is_friendpop" mini type="warn" class="mini_button"
+                                      @click.native="openFriend_2(item)">
                                 朋友圈文案
                             </x-button>
                             <x-button v-else mini type="" class="mini_button dis" @click.native="openFriend(item)">
@@ -64,12 +65,13 @@
             </li>
         </ul>
         <ul v-else class="animation_opactiy">
-            <li class="list_back_li" v-for="item in 10" :key="item">
-                <img src="../../assets/images/shopback.svg" class="list_back_svg">
-            </li>
+            <p class="empty_data">没有相关数据</p>
+            <!--<li class="list_back_li" v-for="item in 10" :key="item">-->
+            <!--<img src="../../assets/images/shopback.svg" class="list_back_svg">-->
+            <!--</li>-->
         </ul>
 
-        <p v-if="touchend" class="empty_data">请取消朋友圈文案可以搜索更多</p>
+        <!--<p v-if="touchend" class="empty_data">请取消朋友圈文案可以搜索更多</p>-->
 
 
         <transition name="loading">
@@ -157,6 +159,7 @@
     import { mapState } from 'vuex'
     import Clipboard from 'clipboard'
     import goodsDetail from '../../components/common/goodsDetail'
+    import { Base64 } from 'js-base64'
 
     export default {
         data () {
@@ -178,8 +181,8 @@
                     image: [], // 朋友圈图片，多图以‘#’号分隔
                     market_image: [], //营销主图
                 },
-                popInfoDetail : {
-                    content : '',
+                popInfoDetail: {
+                    content: '',
                 },
                 currentItem: null,
                 thumbnails: [], // 上传图片组
@@ -198,6 +201,7 @@
             ...mapState([
                 'isSearching',
                 'hackReset',
+                'userInfo',
             ]),
         },
         directives: {
@@ -276,25 +280,39 @@
             copyTaoPwd (item) {
                 // console.log(!!item.tao_pwd)
                 if (!!item.tao_pwd) {
-                    this.copyText = item.D_title
-                        + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
-                        + '--------抢购方式--------\n'
-                        + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
+                    if (this.userInfo.tkl_type == 2) {
+                        this.copyText = item.D_title
+                            + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
+                            + '--------抢购方式--------\n'
+                            + '打开连接\n' +
+                            'https://wenan001.kuaizhan.com/?taowords=' + item.tao_pwd + '&pic=' + Base64.encode(item.Pic) + '\n'
+                    } else {
+                        this.copyText = item.D_title
+                            + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
+                            + '--------抢购方式--------\n'
+                            + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
+                    }
                     this.pwdPop = true
-                    // this.copy()
-                    // location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`
+
                 } else {
                     this.$http.get(`/api/get_taobao_tbk_tpwd?id=${item.GoodsID}`).then(res => {
                         // console.log(res.data)
                         if (res.data.code == 200) {
                             item.tao_pwd = res.data.data.tkl
-                            this.copyText = item.D_title
-                                + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
-                                + '-----抢购方式--------\n'
-                                + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
+                            if (this.userInfo.tkl_type == 2) {
+                                this.copyText = item.D_title
+                                    + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
+                                    + '--------抢购方式--------\n'
+                                    + '打开连接\n' +
+                                    'https://wenan001.kuaizhan.com/?taowords=' + item.tao_pwd + '&pic=' + Base64.encode(item.Pic) + '\n'
+                            } else {
+                                this.copyText = item.D_title
+                                    + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
+                                    + '--------抢购方式--------\n'
+                                    + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
+                            }
                             this.pwdPop = true
-                            // this.copy()
-                            // location.href = `https://taokewenan.kuaizhan.com/?taowords=${item.tao_pwd}`
+
                         } else {
                             // alert(res.data.data)
                             this.showPosition('middle', res.data.data, 'warn')
