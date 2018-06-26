@@ -246,7 +246,7 @@
                 if (this.type == 'paoliang') {
                     this.api = 'get_dtk_goods_list'
                     this.$http.get(`api/${this.api}?type=${this.type}&page=${page}`).then(res => {
-                        // console.log(this.api,res.data)
+                        console.log(this.type, res.data)
 
                         this.goodsListArr = this.goodsListArr.concat(res.data.data.list)
 
