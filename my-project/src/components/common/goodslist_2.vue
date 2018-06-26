@@ -379,7 +379,7 @@
                 this.friendPop = !this.friendPop
                 this.link = 'https://detail.tmall.com/item.htm?id=' + item.goods_id
                 this.popInfo.keyid = item.id //商品自增长id
-                this.popInfo.type = 'tkdj' //文案属于淘客基地商品
+                this.popInfo.type = 'tkjd' //文案属于淘客基地商品
                 this.popInfo.goods_id = item.goods_id //商品淘宝id
                 this.popInfo.goods_title = item.goods_name
                 this.popInfo.content = item.quan_guid_content
