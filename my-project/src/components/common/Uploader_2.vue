@@ -2,7 +2,7 @@
     <div class="weui-uploader">
         <div class="weui-uploader__bd">
             <ul class="weui-uploader__files">
-                <li class="weui-uploader__file" v-for="(thumbnail, index) in thumbnails"
+                <li class="weui-uploader__file" v-for="(thumbnail, index) in thumbnails" :key="thumbnail"
                     :style="{ backgroundImage: `url(${ thumbnail })` }" @click="click(index)">
                     <!--<badge text="x" class="delete" @click.native.stop="deleteImage(index)"></badge>-->
                 </li>
@@ -87,7 +87,7 @@
                 this.$http.post(`/api/uploadFile`, form, {
                     headers: {'Content-Type': 'multipart/form-data'}
                 }).then(response => {
-                    uri = 'http://39.105.108.120/' + response.data.data
+                    uri = response.data.data
                     this.thumbnails.push(uri)
                     // console.log(this.thumbnails)
                 }).catch(error => {

@@ -3,15 +3,15 @@
         <div class="weui-uploader__bd">
             <ul class="weui-uploader__files">
                 <li class="weui-uploader__file uploadImage" v-for="(thumbnail, index) in popInfo.market_image"
-                    :style="{ backgroundImage: `url('http://39.105.108.120/${ thumbnail }')` }"
-                    @click.native="click(index)">
+                    :style="{ backgroundImage: `url(${ thumbnail }')` }"
+                    @click.native="click(index)" :key="thumbnail">
                     <badge text="x" class="delete" @click.native.stop="deleteImage(popInfo.market_image,index)"></badge>
                 </li>
             </ul>
             <ul class="weui-uploader__files">
                 <li class="weui-uploader__file uploadImage" v-for="(thumbnail, index) in popInfo.image"
-                    :style="{ backgroundImage: `url('http://39.105.108.120/${ thumbnail }')` }"
-                    @click.native="click(index)">
+                    :style="{ backgroundImage: `url(${ thumbnail }')` }"
+                    @click.native="click(index)" :key="thumbnail">
                     <badge text="x" class="delete" @click.native.stop="deleteImage(popInfo.image,index)"></badge>
                 </li>
             </ul>

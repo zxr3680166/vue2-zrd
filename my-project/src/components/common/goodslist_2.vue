@@ -325,7 +325,7 @@
                 // console.log(!!item.tao_pwd)
                 if (!!item.tao_pwd) {
                     this.copyText = item.goods_name
-                        + '\n原价' + item.Org_price + '  券后' + item.price_coupons + '\n'
+                        + '\n原价' + item.price + '  券后' + item.price_after_coupons + '\n'
                         + '--------抢购方式--------\n'
                         + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
                     this.pwdPop = true
@@ -335,9 +335,9 @@
                     this.$http.get(`/api/get_taobao_tbk_tpwd?id=${item.goods_id}`).then(res => {
                         // console.log(res.data)
                         if (res.data.code == 200) {
-                            item.tao_pwd = res.data.data.tao_pwd
+                            item.tao_pwd = res.data.data.tkl
                             this.copyText = item.goods_name
-                                + '\n原价' + item.Org_price + '  券后' + item.price_coupons + '\n'
+                                + '\n原价' + item.price + '  券后' + item.price_after_coupons + '\n'
                                 + '-----抢购方式--------\n'
                                 + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
                             this.pwdPop = true
@@ -360,6 +360,7 @@
                 this.friendPop = !this.friendPop
                 this.link = 'https://detail.tmall.com/item.htm?id=' + item.goods_id
                 this.popInfo.keyid = item.id //商品自增长id
+                this.popInfo.type = 'tkdj' //文案属于淘客基地商品
                 this.popInfo.goods_id = item.goods_id //商品淘宝id
                 this.popInfo.goods_title = item.cate_name
                 this.popInfo.content = item.quan_guid_content
@@ -368,7 +369,7 @@
             },
             openFriend_2 (item) {
                 // console.log(item)
-                this.$http.get(`api/get_friendpop_detail?goods_id=${item.GoodsID}`).then(res => {
+                this.$http.get(`api/get_friendpop_detail?goods_id=${item.goods_id}`).then(res => {
                     console.log(res.data)
                     this.popInfoDetail = res.data.data.entity
                 })

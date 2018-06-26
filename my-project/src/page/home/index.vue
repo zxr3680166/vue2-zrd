@@ -50,7 +50,7 @@
         data () {
             return {
                 tabList: ['实时排行', '聚划算', '淘抢购', '大牌推荐', '全部商品', ''],
-                types: ['paoliang', 'www_lingquan', 'tqg', 'jhs', 'dapai', 'classify'],
+                types: ['paoliang', 'jhs', 'tqg','dapai','www_lingquan', 'classify'],
                 // goodsList: [[], [], [], [], []],// 商品列表数据
                 index: 0,
             }

@@ -277,7 +277,7 @@
                 // console.log(!!item.tao_pwd)
                 if (!!item.tao_pwd) {
                     this.copyText = item.D_title
-                        + '\n原价' + item.Org_Price + '  券后' + item.Quan_price + '\n'
+                        + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
                         + '--------抢购方式--------\n'
                         + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
                     this.pwdPop = true
@@ -287,9 +287,9 @@
                     this.$http.get(`/api/get_taobao_tbk_tpwd?id=${item.GoodsID}`).then(res => {
                         // console.log(res.data)
                         if (res.data.code == 200) {
-                            item.tao_pwd = res.data.data.tao_pwd
+                            item.tao_pwd = res.data.data.tkl
                             this.copyText = item.D_title
-                                + '\n原价' + item.Org_Price + '  券后' + item.Quan_price + '\n'
+                                + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
                                 + '-----抢购方式--------\n'
                                 + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
                             this.pwdPop = true
@@ -312,6 +312,7 @@
                 this.friendPop = !this.friendPop
                 this.link = 'https://detail.tmall.com/item.htm?id=' + item.GoodsID
                 this.popInfo.keyid = item.ID //商品自增长id
+                this.popInfo.type = 'dtk' //文案属于大淘客商品
                 this.popInfo.goods_id = item.GoodsID //商品淘宝id
                 this.popInfo.goods_title = item.Title
                 this.popInfo.content = item.Introduce

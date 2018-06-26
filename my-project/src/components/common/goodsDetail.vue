@@ -12,7 +12,7 @@
 
                 <div class="images">
                     <img class="previewer-demo-img miniImage" v-for="(item, index) in list" :src="item.src" width="100"
-                         @click="show(index)">
+                         @click="show(index)" :key="item">
                 </div>
 
                 <flexbox :gutter="0" class="button_wrap">
@@ -108,10 +108,12 @@
         props: ['popInfoDetail','currentItem'],
         watch: {
             popInfoDetail: function (value) {
+                this.list = [];//每次弹出文案前都清空数据
+
                 if (this.popInfoDetail) {
                     this.detailPop = true
                     let market_image = {
-                        src: `http://39.105.108.120/` + this.popInfoDetail.market_image,
+                        src: this.popInfoDetail.market_image,
                         w: 200,
                         h: 200,
                     }
@@ -119,7 +121,7 @@
                     let images = this.popInfoDetail.image.split('#')
                     for (let i = 0; i < images.length; i++) {
                         this.list.push({
-                            src: `http://39.105.108.120/` + images[i],
+                            src: images[i],
                             w: 200,
                             h: 200,
                         })
