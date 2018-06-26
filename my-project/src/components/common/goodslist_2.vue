@@ -23,7 +23,7 @@
                     </header>
                     <flexbox class="info_detail">
                         <flexbox-item :span="1/5">
-                            <div class="goods_info">¥{{item.price}}</div>
+                            <div class="goods_info">¥{{item.price_after_coupons}}</div>
                         </flexbox-item>
                         <flexbox-item :span="1/3">
                             <div class="goods_info">佣金：{{item.rate}}%</div>
@@ -34,7 +34,7 @@
                     </flexbox>
                     <flexbox class="info_detail" :gutter="0">
                         <flexbox-item :span="1.2/6">
-                            <div class="goods_info">券{{item.price_coupons}}元</div>
+                            <div class="goods_info">券{{item.price_after_coupons_coupons}}元</div>
                         </flexbox-item>
                         <flexbox-item :span="1.2/3">
                             <x-button v-if="item.is_friendpop" mini type="warn" class="mini_button" @click.native="openFriend_2(item)">
@@ -273,7 +273,7 @@
                 }
 
                 this.$http.post(`/api/get_tkjd_goods_list`, params).then(res => {
-                    // console.log(params, res.data)
+                    console.log(this.type, res.data)
 
                     if (this.type == 'classify') {
 
@@ -334,33 +334,33 @@
                 // console.log(!!item.tao_pwd)
                 if (!!item.tao_pwd) {
                     if (this.userInfo.tkl_type == 2) {
-                        this.copyText = item.D_title
-                            + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
+                        this.copyText = item.goods_name
+                            + '\n原价' + item.price_after_coupons + '  券后' + item.price_after_coupons + '\n'
                             + '--------抢购方式--------\n'
                             + '打开连接\n' +
                             'https://wenan001.kuaizhan.com/?taowords=' + item.tao_pwd + '&pic=' + Base64.encode(item.pic) + '\n'
                     } else {
-                        this.copyText = item.D_title
-                            + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
+                        this.copyText = item.goods_name
+                            + '\n原价' + item.price_after_coupons + '  券后' + item.price_after_coupons + '\n'
                             + '--------抢购方式--------\n'
                             + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
                     }
                     this.pwdPop = true
 
                 } else {
-                    this.$http.get(`/api/get_taobao_tbk_tpwd?id=${item.GoodsID}`).then(res => {
+                    this.$http.get(`/api/get_taobao_tbk_tpwd?id=${item.goods_id}`).then(res => {
                         // console.log(res.data)
                         if (res.data.code == 200) {
                             item.tao_pwd = res.data.data.tkl
                             if (this.userInfo.tkl_type == 2) {
-                                this.copyText = item.D_title
-                                    + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
+                                this.copyText = item.goods_name
+                                    + '\n原价' + item.price_after_coupons + '  券后' + item.price_after_coupons + '\n'
                                     + '--------抢购方式--------\n'
                                     + '打开连接\n' +
-                                    'https://wenan001.kuaizhan.com/?taowords=' + item.tao_pwd + '&pic=' + Base64.encode(item.Pic) + '\n'
+                                    'https://wenan001.kuaizhan.com/?taowords=' + item.tao_pwd + '&pic=' + Base64.encode(item.pic) + '\n'
                             } else {
-                                this.copyText = item.D_title
-                                    + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
+                                this.copyText = item.goods_name
+                                    + '\n原价' + item.price_after_coupons + '  券后' + item.price_after_coupons + '\n'
                                     + '--------抢购方式--------\n'
                                     + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
                             }
