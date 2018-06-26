@@ -64,12 +64,13 @@
             </li>
         </ul>
         <ul v-else class="animation_opactiy">
-            <li class="list_back_li" v-for="item in 10" :key="item">
-                <img src="../../assets/images/shopback.svg" class="list_back_svg">
-            </li>
+            <p class="empty_data">没有相关数据</p>
+            <!--<li class="list_back_li" v-for="item in 10" :key="item">-->
+            <!--<img src="../../assets/images/shopback.svg" class="list_back_svg">-->
+            <!--</li>-->
         </ul>
 
-        <p v-if="touchend" class="empty_data">请取消朋友圈文案可以搜索更多</p>
+        <!--<p v-if="touchend" class="empty_data">请取消朋友圈文案可以搜索更多</p>-->
 
 
         <transition name="loading">
@@ -159,6 +160,7 @@
     import { mapState } from 'vuex'
     import Clipboard from 'clipboard'
     import goodsDetail from '../../components/common/goodsDetail'
+    import { Base64 } from 'js-base64'
 
     export default {
         data () {
@@ -200,6 +202,7 @@
                 'classify_selected',
                 'isSearching',
                 'hackReset',
+                'userInfo',
             ]),
         },
         directives: {
@@ -257,6 +260,10 @@
                         type: this.type, //商品自增长id
                         cid: this.classify_selected.cid, //商品淘宝id
                         page: page, //商品标题
+                    }
+
+                    if (params.cid == 0) {
+                        return
                     }
                 } else {
                     params = {
@@ -322,21 +329,39 @@
             copyTaoPwd (item) {
                 // console.log(!!item.tao_pwd)
                 if (!!item.tao_pwd) {
-                    this.copyText = item.goods_name
-                        + '\n原价' + item.price + '  券后' + item.price_after_coupons + '\n'
-                        + '--------抢购方式--------\n'
-                        + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
+                    if (this.userInfo.tkl_type == 2) {
+                        this.copyText = item.D_title
+                            + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
+                            + '--------抢购方式--------\n'
+                            + '打开连接\n' +
+                            'https://wenan001.kuaizhan.com/?taowords=' + item.tao_pwd + '&pic=' + Base64.encode(item.pic) + '\n'
+                    } else {
+                        this.copyText = item.D_title
+                            + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
+                            + '--------抢购方式--------\n'
+                            + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
+                    }
                     this.pwdPop = true
+
                 } else {
-                    this.$http.get(`/api/get_taobao_tbk_tpwd?id=${item.goods_id}`).then(res => {
+                    this.$http.get(`/api/get_taobao_tbk_tpwd?id=${item.GoodsID}`).then(res => {
                         // console.log(res.data)
                         if (res.data.code == 200) {
                             item.tao_pwd = res.data.data.tkl
-                            this.copyText = item.goods_name
-                                + '\n原价' + item.price + '  券后' + item.price_after_coupons + '\n'
-                                + '-----抢购方式--------\n'
-                                + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
+                            if (this.userInfo.tkl_type == 2) {
+                                this.copyText = item.D_title
+                                    + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
+                                    + '--------抢购方式--------\n'
+                                    + '打开连接\n' +
+                                    'https://wenan001.kuaizhan.com/?taowords=' + item.tao_pwd + '&pic=' + Base64.encode(item.Pic) + '\n'
+                            } else {
+                                this.copyText = item.D_title
+                                    + '\n原价' + item.Org_Price + '  券后' + item.Price + '\n'
+                                    + '--------抢购方式--------\n'
+                                    + '复制本信息' + item.tao_pwd + '打开淘宝即可获取\n'
+                            }
                             this.pwdPop = true
+
                         } else {
                             // alert(res.data.data)
                             this.showPosition('middle', res.data.data, 'warn')
