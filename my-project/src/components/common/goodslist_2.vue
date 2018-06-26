@@ -125,7 +125,7 @@
                         title="复制淘口令"
                         :show-bottom-border="false">
                 </popup-header>
-                <x-textarea class="textarea_input" title="" :max="200" placeholder="淘口令" :show-counter="false"
+                <x-textarea class="textarea_input" title="" :max="300" placeholder="淘口令" :show-counter="false"
                             :rows="8" :cols="30" v-model="copyText">
                 </x-textarea>
 
@@ -334,7 +334,7 @@
                             + '\n原价' + item.price_after_coupons + '  券后' + item.price_after_coupons + '\n'
                             + '--------抢购方式--------\n'
                             + '打开连接\n' +
-                            'https://wenan001.kuaizhan.com/?taowords=' + item.tao_pwd + '&pic=' + Base64.encode(item.pic) + '\n'
+                            'https://wenan001.kuaizhan.com/?taowords=' + item.tao_pwd.replace(/￥/g,'') + '&pic=' + Base64.encode(item.pic) + '\n'
                     } else {
                         this.copyText = item.goods_name
                             + '\n原价' + item.price_after_coupons + '  券后' + item.price_after_coupons + '\n'
@@ -353,7 +353,7 @@
                                     + '\n原价' + item.price_after_coupons + '  券后' + item.price_after_coupons + '\n'
                                     + '--------抢购方式--------\n'
                                     + '打开连接\n' +
-                                    'https://wenan001.kuaizhan.com/?taowords=' + item.tao_pwd + '&pic=' + Base64.encode(item.pic) + '\n'
+                                    'https://wenan001.kuaizhan.com/?taowords=' + item.tao_pwd.replace(/￥/g,'') + '&pic=' + Base64.encode(item.pic) + '\n'
                             } else {
                                 this.copyText = item.goods_name
                                     + '\n原价' + item.price_after_coupons + '  券后' + item.price_after_coupons + '\n'
