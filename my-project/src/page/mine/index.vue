@@ -173,7 +173,8 @@
                 <flexbox orient="vertical" class="">
                     <flexbox-item>
                         <div class="">
-                            <x-switch :title="setArray.tkl.title[setArray.tkl.value]" :value-map="setArray.tkl.valueMap"
+                            <x-switch :title="setArray.tkl.title[setArray.tkl.value-1]"
+                                      :value-map="setArray.tkl.valueMap"
                                       v-model="setArray.tkl.value" @on-change="onChange_tkl"></x-switch>
                         </div>
                     </flexbox-item>
@@ -278,8 +279,9 @@
                 setArray: {
                     tkl: {
                         title: ['淘口令口令版', '淘口令链接版'],
-                        value: 0,
-                        valueMap: [0, 1]
+                        value: 1,
+                        oldValue: 1,
+                        valueMap: [1, 2],
                     }
                 },
 
@@ -325,6 +327,8 @@
                     this.privilege = this.userInfo.privilege
                     // this.pointNumber = this.userInfo.point
                     this.pid = this.userInfo.pid
+                    this.setArray.tkl.value = this.userInfo.tkl_type
+                    this.setArray.tkl.oldValue = this.userInfo.tkl_type
                 } else {
                     this.nickname = '登录/注册'
                     this.mobile = '暂无绑定手机号'
@@ -372,12 +376,14 @@
                 this.showPositionValue = true
             },
             onChange_tkl (Val) {
-                // console.log('淘口令设置', Val + 1)
-                this.$http.post(`/api/update_tkl_type`, {tkl_type: Val + 1}).then(res => {
+                // console.log('淘口令设置', Val )
+                if (this.setArray.tkl.oldValue == this.setArray.tkl.value) {
+                    return
+                }
+                this.$http.post(`/api/update_tkl_type`, {tkl_type: Val}).then(res => {
                     if (res.data.code == 200) {
                         this.showPosition('middle', '淘口令设置成功', 'success')
-                        this.userInfo.pid = this.pid
-                        this.popUp_pid.show = false
+                        this.userInfo.tkl_type = Val
                     }
                 })
             },

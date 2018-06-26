@@ -242,7 +242,7 @@
                 if (this.type == 'paoliang') {
                     this.api = 'get_dtk_goods_list'
                     this.$http.get(`api/${this.api}?type=${this.type}&page=${page}`).then(res => {
-                        console.log(this.api,res.data)
+                        // console.log(this.api,res.data)
 
                         this.goodsListArr = this.goodsListArr.concat(res.data.data.list)
 
@@ -354,7 +354,7 @@
 
                 this.$http.post(`/api/add_friendpop`, this.popInfo).then(res => {
                     if (res.data.code == 200) {
-                        console.log(this.popInfo)
+                        // console.log(this.popInfo)
                         this.popInfo = params
                     } else {
                         this.showPosition('middle', '未知错误', 'warn')
